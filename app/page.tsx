@@ -488,20 +488,22 @@ export default function Page() {
           </div>
 
           {activeBrand && (
-            <article id="showroom-product-drawer" className="showroom-drawer" aria-live="polite">
-              <header className="drawer-header">
-                <div className="brand-logo-wrap">
-                  <img src={activeBrand.logo} alt={`${activeBrand.name} logo`} loading="lazy" />
-                </div>
-                <div>
-                  <p className="eyebrow">{t(COPY.showroom.eyebrow)}</p>
-                  <h3 className="brand-name">{activeBrand.name}</h3>
-                  <p className="drawer-note">{t(COPY.showroom.sourceNote)}</p>
-                </div>
-                <button type="button" className="drawer-close" onClick={() => setSelectedBrand(null)}>
-                  {t(COPY.showroom.close)}
-                </button>
-              </header>
+            <>
+              <div className="drawer-backdrop" onClick={() => setSelectedBrand(null)} />
+              <article id="showroom-product-drawer" className="showroom-drawer" aria-live="polite">
+                <header className="drawer-header">
+                  <div className="brand-logo-wrap">
+                    <img src={activeBrand.logo} alt={`${activeBrand.name} logo`} loading="lazy" />
+                  </div>
+                  <div>
+                    <p className="eyebrow">{t(COPY.showroom.eyebrow)}</p>
+                    <h3 className="brand-name">{activeBrand.name}</h3>
+                    <p className="drawer-note">{t(COPY.showroom.sourceNote)}</p>
+                  </div>
+                  <button type="button" className="drawer-close" onClick={() => setSelectedBrand(null)}>
+                    {t(COPY.showroom.close)}
+                  </button>
+                </header>
               <div className="product-grid">
                 {activeBrand.products.map((p) => (
                   <article key={p.slug} className="product-card product-card-clickable">
@@ -518,7 +520,8 @@ export default function Page() {
                   </article>
                 ))}
               </div>
-            </article>
+              </article>
+            </>
           )}
         </section>
 

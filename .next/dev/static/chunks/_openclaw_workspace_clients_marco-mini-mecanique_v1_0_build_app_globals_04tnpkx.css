@@ -976,12 +976,19 @@ a:focus-visible, button:focus-visible {
 }
 
 .showroom-drawer {
-  background: linear-gradient(#171b1e, #0d1012);
-  border: 1px solid #c77a2e73;
-  margin-top: 1.5rem;
-  padding: 1rem;
-  position: relative;
-  overflow: hidden;
+  z-index: 100;
+  background: var(--graphite-night);
+  border: 1px solid var(--steel-rim);
+  border-radius: 12px;
+  width: min(1100px, 92vw);
+  max-height: 78vh;
+  padding: 2rem;
+  position: fixed;
+  top: 10vh;
+  left: 50%;
+  overflow: auto;
+  transform: translateX(-50%);
+  box-shadow: 0 25px 60px #000000b3;
 }
 
 @media (min-width: 768px) {
