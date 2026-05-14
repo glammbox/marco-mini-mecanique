@@ -8,50 +8,31 @@ __turbopack_context__.s([
 ]);
 var __TURBOPACK__imported__module__$5b$project$5d2f2e$openclaw$2f$workspace$2f$clients$2f$marco$2d$mini$2d$mecanique$2f$v1$2e$0$2f$build$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/.openclaw/workspace/clients/marco-mini-mecanique/v1.0/build/node_modules/next/dist/compiled/react/index.js [app-client] (ecmascript)");
 var _s = __turbopack_context__.k.signature();
-// marco-mini-mecanique — house motion choreography (HAND-PATCH 2026-05-13, post-iter-3)
-// Hand-patch fixes (Karpathy style — Pat directive 2026-05-13):
-//   1. Disable Lenis under headless browsers (navigator.webdriver) so the validator
-//      Playwright snapshot doesn't catch ScrollTrigger mid-animation with sections at opacity:0.
-//   2. ALL gsap.from() with scrollTrigger gets `immediateRender: false` — the initial
-//      opacity:0 state is no longer applied on page load; it only applies as the
-//      trigger zone is approached. This way fast scroll (Playwright, mouse-wheel
-//      power users) never sees a "stuck black page".
-//   3. Safety reveal timer at +1800ms: force any element with inline opacity:0 to
-//      visible. Belt and suspenders against any future ScrollTrigger setup drift.
+// marco-mini-mecanique — GLAMMBOX signature motion pass
+// Source recipe checked against Fred AI School + GLAMMBOX core examples:
+// - Lenis smooth scroll
+// - GSAP fromTo only, not gsap.from flash states
+// - clip-path heading reveals
+// - horizontal signature image/text pairing
+// - scroll-scrub parallax, no brightness/filter darkening
 "use client";
 ;
-function useAnimations(rootRef, lang) {
+function useAnimations(rootRef, _lang) {
     _s();
     (0, __TURBOPACK__imported__module__$5b$project$5d2f2e$openclaw$2f$workspace$2f$clients$2f$marco$2d$mini$2d$mecanique$2f$v1$2e$0$2f$build$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useEffect"])({
         "useAnimations.useEffect": ()=>{
             const root = rootRef.current;
             if (!root) return;
             const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-            const isCoarse = window.matchMedia("(pointer: coarse)").matches;
             const isHeadless = typeof navigator !== "undefined" && navigator.webdriver === true || /HeadlessChrome|PhantomJS/i.test(typeof navigator !== "undefined" ? navigator.userAgent : "");
-            let cleanups = [];
-            let lenis = null;
-            // Safety reveal: if anything is still at inline opacity:0 after 1.8s, force it visible.
-            // Covers ScrollTrigger setup-drift, missing trigger zones, hung Lenis.
-            const safetyReveal = window.setTimeout({
-                "useAnimations.useEffect.safetyReveal": ()=>{
-                    root.querySelectorAll("*").forEach({
-                        "useAnimations.useEffect.safetyReveal": (el)=>{
-                            const op = el.style.opacity;
-                            if (op === "0" || op === "") {
-                                // Only touch elements GSAP set to 0; leave naturally-visible ones alone.
-                                if (parseFloat(getComputedStyle(el).opacity) < 0.05) {
-                                    el.style.opacity = "1";
-                                    el.style.transform = "none";
-                                }
-                            }
-                        }
-                    }["useAnimations.useEffect.safetyReveal"]);
-                }
-            }["useAnimations.useEffect.safetyReveal"], 1800);
-            cleanups.push({
-                "useAnimations.useEffect": ()=>window.clearTimeout(safetyReveal)
-            }["useAnimations.useEffect"]);
+            if (reduced) {
+                root.classList.add("motion-fallback");
+                return;
+            }
+            let cleanup = {
+                "useAnimations.useEffect.cleanup": ()=>{}
+            }["useAnimations.useEffect.cleanup"];
+            let mounted = true;
             ({
                 "useAnimations.useEffect": async ()=>{
                     const [{ default: gsap }, ScrollTriggerMod, LenisMod] = await Promise.all([
@@ -59,376 +40,204 @@ function useAnimations(rootRef, lang) {
                         __turbopack_context__.A("[project]/.openclaw/workspace/clients/marco-mini-mecanique/v1.0/build/node_modules/gsap/ScrollTrigger.js [app-client] (ecmascript, async loader)"),
                         __turbopack_context__.A("[project]/.openclaw/workspace/clients/marco-mini-mecanique/v1.0/build/node_modules/lenis/dist/lenis.mjs [app-client] (ecmascript, async loader)")
                     ]);
+                    if (!mounted) return;
                     const ScrollTrigger = ScrollTriggerMod.ScrollTrigger ?? ScrollTriggerMod.default;
                     const Lenis = LenisMod.default ?? LenisMod.Lenis;
                     gsap.registerPlugin(ScrollTrigger);
-                    const MOTION_SCALE = 2.6;
-                    gsap.globalTimeline.timeScale(1 / MOTION_SCALE);
-                    // Lenis stays off in headless / reduced-motion contexts so the validator
-                    // snapshot scrolls natively and ScrollTrigger keyframes resolve instantly.
-                    if (!reduced && !isHeadless) {
+                    let rafId = 0;
+                    let lenis = null;
+                    if (!isHeadless) {
                         lenis = new Lenis({
-                            duration: 3.0,
-                            easing: {
-                                "useAnimations.useEffect": (t)=>Math.min(1, 1.001 - Math.pow(2, -10 * t))
-                            }["useAnimations.useEffect"],
-                            lerp: isCoarse ? 0.1 : undefined,
-                            smoothWheel: true
+                            duration: 1.55,
+                            smoothWheel: true,
+                            wheelMultiplier: 0.85
                         });
                         const raf = {
                             "useAnimations.useEffect.raf": (time)=>{
-                                if (lenis) {
-                                    lenis.raf(time);
-                                    requestAnimationFrame(raf);
-                                }
+                                lenis?.raf(time);
+                                rafId = requestAnimationFrame(raf);
                             }
                         }["useAnimations.useEffect.raf"];
-                        requestAnimationFrame(raf);
+                        rafId = requestAnimationFrame(raf);
                         lenis.on("scroll", ScrollTrigger.update);
                     }
-                    // Shared scrollTrigger defaults — immediateRender:false keeps content visible
-                    // until the trigger area is approached. Any failure to fire => content stays at opacity 1.
-                    const stConfig = {
-                        "useAnimations.useEffect.stConfig": (extra)=>({
-                                once: true,
-                                ...extra
-                            })
-                    }["useAnimations.useEffect.stConfig"];
-                    const fromOpts = {
-                        "useAnimations.useEffect.fromOpts": (cfg)=>({
-                                ...cfg,
-                                duration: typeof cfg.duration === "number" ? cfg.duration * MOTION_SCALE : cfg.duration,
-                                stagger: typeof cfg.stagger === "number" ? cfg.stagger * 1.8 : cfg.stagger,
-                                immediateRender: false
-                            })
-                    }["useAnimations.useEffect.fromOpts"];
                     const ctx = gsap.context({
                         "useAnimations.useEffect.ctx": ()=>{
-                            // Editorial Word Reveal — hero
-                            const heroWords = root.querySelectorAll(".hero-title .word");
+                            // Hero — same word reveal family as Fred/GLAMMBOX, slower and readable.
+                            const heroWords = gsap.utils.toArray(".hero-title .word");
                             if (heroWords.length) {
-                                if (reduced) {
-                                    gsap.set(heroWords, {
-                                        opacity: 1,
-                                        y: 0
-                                    });
-                                } else {
-                                    gsap.from(heroWords, {
-                                        opacity: 0,
-                                        y: 22,
-                                        duration: 2.8,
-                                        ease: "power3.out",
-                                        stagger: 0.25,
-                                        delay: 0.25
-                                    });
-                                }
-                            }
-                            if (!reduced) {
-                                gsap.from(root.querySelectorAll(".hero .eyebrow, .hero-sub, .hero-cta"), {
+                                gsap.fromTo(heroWords, {
+                                    y: 58,
                                     opacity: 0,
-                                    y: 16,
-                                    duration: 2.6,
-                                    ease: "power3.out",
-                                    stagger: 0.27,
-                                    delay: 0.7
+                                    clipPath: "inset(35% 0 35% 0)"
+                                }, {
+                                    y: 0,
+                                    opacity: 1,
+                                    clipPath: "inset(0% 0 0% 0)",
+                                    duration: 1.65,
+                                    stagger: 0.18,
+                                    ease: "power3.out"
                                 });
                             }
-                            // Soft Parallax Depth — bumped scrubs (1→2.2, 1.2→2.6) so the hero
-                            // overlays drift slowly, premium Rolex/Hodinkee feel instead of
-                            // jumpy follow. Video layer stays fixed (no parallax on .layer-bg).
-                            if (!reduced && !isHeadless) {
-                                gsap.to(".hero .layer-mid", {
-                                    yPercent: -10,
-                                    ease: "none",
-                                    scrollTrigger: {
-                                        trigger: ".hero",
-                                        start: "top top",
-                                        end: "bottom top",
-                                        scrub: 5.5
-                                    }
-                                });
-                                gsap.to(".liquid-veil-a", {
-                                    xPercent: -9,
-                                    yPercent: 8,
-                                    rotate: -8,
-                                    ease: "none",
-                                    scrollTrigger: {
-                                        trigger: ".hero",
-                                        start: "top top",
-                                        end: "bottom top",
-                                        scrub: 6.5
-                                    }
-                                });
-                                gsap.to(".liquid-veil-b", {
-                                    xPercent: 12,
-                                    yPercent: -7,
-                                    rotate: 11,
-                                    ease: "none",
-                                    scrollTrigger: {
-                                        trigger: ".hero",
-                                        start: "top top",
-                                        end: "bottom top",
-                                        scrub: 6.5
-                                    }
-                                });
-                            }
-                            // Section title reveals — keep visible on reduced motion
-                            root.querySelectorAll(".section").forEach({
-                                "useAnimations.useEffect.ctx": (section)=>{
-                                    const title = section.querySelector(".section-title");
-                                    const eyebrow = section.querySelector(".eyebrow");
-                                    const lead = section.querySelector(".section-lead");
-                                    if (!title) return;
-                                    const words = title.querySelectorAll(".word");
-                                    if (reduced) {
-                                        gsap.set([
-                                            eyebrow,
-                                            words,
-                                            lead
-                                        ].filter(Boolean), {
-                                            opacity: 1,
-                                            y: 0
-                                        });
-                                        return;
-                                    }
-                                    const tl = gsap.timeline({
-                                        scrollTrigger: stConfig({
-                                            trigger: section,
-                                            start: "top 78%"
-                                        }),
-                                        defaults: {
-                                            ease: "power3.out",
-                                            immediateRender: false
+                            gsap.fromTo(root.querySelectorAll(".hero .eyebrow, .hero-sub, .hero-cta"), {
+                                y: 34,
+                                opacity: 0
+                            }, {
+                                y: 0,
+                                opacity: 1,
+                                duration: 1.35,
+                                stagger: 0.16,
+                                delay: 0.35,
+                                ease: "power3.out"
+                            });
+                            // GLAMMBOX section heading recipe: clip reveal, reversible on scroll.
+                            gsap.utils.toArray(".section-title").forEach({
+                                "useAnimations.useEffect.ctx": (heading)=>{
+                                    gsap.fromTo(heading, {
+                                        y: 28,
+                                        opacity: 0,
+                                        clipPath: "inset(0 0 18% 0)"
+                                    }, {
+                                        y: 0,
+                                        opacity: 1,
+                                        clipPath: "inset(0 0 0% 0)",
+                                        duration: 1.25,
+                                        ease: "power3.out",
+                                        scrollTrigger: {
+                                            trigger: heading,
+                                            start: "top 82%",
+                                            toggleActions: "play reverse play reverse"
                                         }
                                     });
-                                    if (eyebrow) tl.from(eyebrow, fromOpts({
-                                        opacity: 0,
-                                        y: 14,
-                                        duration: 0.9
-                                    }), 0);
-                                    if (words.length) tl.from(words, fromOpts({
-                                        opacity: 0,
-                                        y: 22,
-                                        duration: 1.0,
-                                        stagger: 0.1
-                                    }), 0.12);
-                                    if (lead) tl.from(lead, fromOpts({
-                                        opacity: 0,
-                                        y: 16,
-                                        duration: 0.95
-                                    }), 0.35);
                                 }
                             }["useAnimations.useEffect.ctx"]);
-                            // Atelier summary reveal — slow, readable, no flashing grid
-                            const atelierSummary = root.querySelectorAll(".atelier-summary-img, .atelier-summary-copy, .atelier-service-list li");
-                            if (atelierSummary.length && !reduced) {
-                                gsap.from(atelierSummary, fromOpts({
-                                    scrollTrigger: stConfig({
-                                        trigger: ".atelier-summary",
-                                        start: "top 85%"
-                                    }),
-                                    opacity: 0,
-                                    y: 24,
-                                    duration: 1.4,
-                                    ease: "power3.out",
-                                    stagger: 0.12
-                                }));
-                            }
-                            // Showroom — brand block reveals + product card fan-in
-                            const featuredCards = root.querySelectorAll(".featured-product-card");
-                            if (featuredCards.length && !reduced) {
-                                gsap.from(featuredCards, fromOpts({
-                                    scrollTrigger: stConfig({
-                                        trigger: ".featured-products",
-                                        start: "top 85%"
-                                    }),
-                                    opacity: 0,
-                                    y: 22,
-                                    scale: 0.985,
-                                    duration: 1.1,
-                                    ease: "power3.out",
-                                    stagger: 0.14
-                                }));
-                            }
-                            const brandChoices = root.querySelectorAll(".brand-choice-card");
-                            if (brandChoices.length && !reduced) {
-                                gsap.from(brandChoices, fromOpts({
-                                    scrollTrigger: stConfig({
-                                        trigger: ".brand-choice-grid",
-                                        start: "top 84%"
-                                    }),
-                                    opacity: 0,
-                                    y: 18,
-                                    duration: 0.9,
-                                    ease: "power3.out",
-                                    stagger: 0.07
-                                }));
-                            }
-                            root.querySelectorAll(".brand-block").forEach({
-                                "useAnimations.useEffect.ctx": (block)=>{
-                                    const header = block.querySelector(".brand-header");
-                                    const cards = block.querySelectorAll(".product-card");
-                                    if (reduced) return;
-                                    if (header) {
-                                        gsap.from(header, fromOpts({
-                                            scrollTrigger: stConfig({
-                                                trigger: block,
-                                                start: "top 85%"
-                                            }),
-                                            opacity: 0,
-                                            y: 22,
-                                            duration: 1.0,
-                                            ease: "power3.out"
-                                        }));
-                                    }
-                                    if (cards.length) {
-                                        gsap.from(cards, fromOpts({
-                                            scrollTrigger: stConfig({
-                                                trigger: block,
-                                                start: "top 75%"
-                                            }),
-                                            opacity: 0,
-                                            y: 28,
-                                            scale: 0.98,
-                                            duration: 1.15,
-                                            ease: "expo.out",
-                                            stagger: 0.1
-                                        }));
-                                    }
+                            gsap.utils.toArray(".eyebrow, .section-lead").forEach({
+                                "useAnimations.useEffect.ctx": (el)=>{
+                                    gsap.fromTo(el, {
+                                        y: 34,
+                                        opacity: 0
+                                    }, {
+                                        y: 0,
+                                        opacity: 1,
+                                        duration: 1.25,
+                                        ease: "power3.out",
+                                        scrollTrigger: {
+                                            trigger: el,
+                                            start: "top 86%",
+                                            toggleActions: "play reverse play reverse"
+                                        }
+                                    });
                                 }
                             }["useAnimations.useEffect.ctx"]);
-                            const drawer = root.querySelector(".showroom-drawer");
-                            if (drawer && !reduced) {
-                                gsap.from(drawer, fromOpts({
-                                    opacity: 0,
-                                    y: 14,
-                                    duration: 0.45,
-                                    ease: "power3.out"
-                                }));
-                            }
-                            // Rolex-Pinned Product Story — desktop only, first brand block
-                            // Disabled in headless to keep validator snapshots clean.
-                            const pinTarget = root.querySelector('.brand-block[data-pin="true"]');
-                            if (pinTarget && !reduced && !isHeadless && window.innerWidth >= 1024 && !isCoarse) {
-                                const track = pinTarget.querySelector(".product-track");
-                                const wrap = pinTarget.querySelector(".product-strip");
-                                if (track && wrap) {
-                                    const computeScroll = {
-                                        "useAnimations.useEffect.ctx.computeScroll": ()=>Math.max(0, track.scrollWidth - wrap.clientWidth)
-                                    }["useAnimations.useEffect.ctx.computeScroll"];
-                                    const scrollWidth = computeScroll();
-                                    if (scrollWidth > 100) {
-                                        gsap.to(track, {
-                                            x: {
-                                                "useAnimations.useEffect.ctx": ()=>-computeScroll()
-                                            }["useAnimations.useEffect.ctx"],
-                                            ease: "none",
-                                            scrollTrigger: {
-                                                trigger: pinTarget,
-                                                start: "top top+=80",
-                                                end: {
-                                                    "useAnimations.useEffect.ctx": ()=>`+=${computeScroll()}`
-                                                }["useAnimations.useEffect.ctx"],
-                                                pin: true,
-                                                scrub: 1,
-                                                anticipatePin: 1,
-                                                invalidateOnRefresh: true
-                                            }
-                                        });
-                                    }
+                            // Signature horizontal pair: image left → final, text right → final.
+                            // No brightness, no darkening, no flash.
+                            [
+                                {
+                                    wrap: ".atelier-summary",
+                                    image: ".atelier-summary-img",
+                                    text: ".atelier-summary-copy"
+                                },
+                                {
+                                    wrap: ".about-grid",
+                                    image: ".about-photo",
+                                    text: ".about-copy"
                                 }
-                            }
-                            // Brand strip drift
-                            if (!reduced) {
-                                gsap.from(".brand-logo-cell", fromOpts({
-                                    scrollTrigger: stConfig({
-                                        trigger: ".brand-strip",
-                                        start: "top 88%"
-                                    }),
-                                    opacity: 0,
-                                    y: 14,
-                                    duration: 0.55,
-                                    ease: "power3.out",
-                                    stagger: 0.05
-                                }));
-                            }
-                            // Video tiles
-                            if (!reduced) {
-                                gsap.from(".video-tile", fromOpts({
-                                    scrollTrigger: stConfig({
-                                        trigger: ".video-grid",
-                                        start: "top 85%"
-                                    }),
-                                    opacity: 0,
-                                    y: 16,
-                                    duration: 0.55,
-                                    ease: "power2.out",
-                                    stagger: 0.07
-                                }));
-                            }
-                            // Parts cards
-                            if (!reduced) {
-                                gsap.from(".parts-card", fromOpts({
-                                    scrollTrigger: stConfig({
-                                        trigger: ".parts-strip",
-                                        start: "top 85%"
-                                    }),
-                                    opacity: 0,
-                                    y: 16,
-                                    duration: 0.55,
-                                    ease: "power3.out",
-                                    stagger: 0.05
-                                }));
-                            }
-                            // Pickup area chips
-                            if (!reduced) {
-                                gsap.from(".area-list li", fromOpts({
-                                    scrollTrigger: stConfig({
-                                        trigger: ".pickup-area",
-                                        start: "top 85%"
-                                    }),
-                                    opacity: 0,
-                                    y: 12,
-                                    duration: 0.45,
-                                    ease: "power3.out",
-                                    stagger: 0.03
-                                }));
-                            }
-                            // About reveals
-                            if (!reduced) {
-                                gsap.from(".about-photo", fromOpts({
-                                    scrollTrigger: stConfig({
-                                        trigger: ".about-grid",
-                                        start: "top 85%"
-                                    }),
-                                    opacity: 0,
-                                    x: -20,
-                                    duration: 0.8,
-                                    ease: "power3.out"
-                                }));
-                                gsap.from(".about-copy > *", fromOpts({
-                                    scrollTrigger: stConfig({
-                                        trigger: ".about-grid",
-                                        start: "top 80%"
-                                    }),
-                                    opacity: 0,
-                                    y: 18,
-                                    duration: 0.6,
-                                    ease: "power3.out",
-                                    stagger: 0.1
-                                }));
-                            }
-                            // Stat counters — tabular nums
+                            ].forEach({
+                                "useAnimations.useEffect.ctx": ({ wrap, image, text })=>{
+                                    const section = root.querySelector(wrap);
+                                    const img = section?.querySelector(image);
+                                    const copy = section?.querySelector(text);
+                                    if (!section || !img || !copy) return;
+                                    const tl = gsap.timeline({
+                                        scrollTrigger: {
+                                            trigger: section,
+                                            start: "top 82%",
+                                            end: "center center",
+                                            scrub: 1.35,
+                                            invalidateOnRefresh: true
+                                        }
+                                    });
+                                    tl.fromTo(img, {
+                                        xPercent: -18,
+                                        y: 0,
+                                        opacity: 0.96
+                                    }, {
+                                        xPercent: 0,
+                                        y: 0,
+                                        opacity: 1,
+                                        ease: "none"
+                                    }, 0).fromTo(copy, {
+                                        xPercent: 18,
+                                        y: 0,
+                                        opacity: 0.96
+                                    }, {
+                                        xPercent: 0,
+                                        y: 0,
+                                        opacity: 1,
+                                        ease: "none"
+                                    }, 0);
+                                }
+                            }["useAnimations.useEffect.ctx"]);
+                            gsap.utils.toArray(".atelier-service-list li, .featured-product-card, .brand-choice-card, .video-tile, .area-list li, .contact-card").forEach({
+                                "useAnimations.useEffect.ctx": (el, i)=>{
+                                    gsap.fromTo(el, {
+                                        y: 42,
+                                        opacity: 0
+                                    }, {
+                                        y: 0,
+                                        opacity: 1,
+                                        duration: 1.35,
+                                        ease: "power3.out",
+                                        delay: i % 8 * 0.035,
+                                        scrollTrigger: {
+                                            trigger: el,
+                                            start: "top 88%",
+                                            toggleActions: "play reverse play reverse"
+                                        }
+                                    });
+                                }
+                            }["useAnimations.useEffect.ctx"]);
+                            // Product/media parallax: light horizontal drift only. Never darkens images.
+                            gsap.utils.toArray(".featured-img, .product-img, .video-poster, .parts, .map-card").forEach({
+                                "useAnimations.useEffect.ctx": (el, i)=>{
+                                    gsap.fromTo(el, {
+                                        xPercent: i % 2 ? 3 : -3
+                                    }, {
+                                        xPercent: i % 2 ? -3 : 3,
+                                        ease: "none",
+                                        scrollTrigger: {
+                                            trigger: el,
+                                            start: "top bottom",
+                                            end: "bottom top",
+                                            scrub: 1.8,
+                                            invalidateOnRefresh: true
+                                        }
+                                    });
+                                }
+                            }["useAnimations.useEffect.ctx"]);
+                            // Very soft decorative veil movement; slow, not flashy.
+                            gsap.utils.toArray(".liquid-veil-a, .liquid-veil-b").forEach({
+                                "useAnimations.useEffect.ctx": (el, i)=>{
+                                    gsap.to(el, {
+                                        xPercent: i ? 10 : -10,
+                                        yPercent: i ? -6 : 6,
+                                        rotate: i ? 7 : -7,
+                                        ease: "none",
+                                        scrollTrigger: {
+                                            trigger: ".hero",
+                                            start: "top top",
+                                            end: "bottom top",
+                                            scrub: 3.5
+                                        }
+                                    });
+                                }
+                            }["useAnimations.useEffect.ctx"]);
+                            // Stat counters stay simple and readable.
                             root.querySelectorAll(".stat-num").forEach({
                                 "useAnimations.useEffect.ctx": (el)=>{
                                     const target = Number(el.dataset.target || "0");
-                                    if (reduced) {
-                                        el.textContent = target.toLocaleString(lang === "fr" ? "fr-CA" : "en-CA");
-                                        return;
-                                    }
-                                    // In headless, just set the final value immediately so the screenshot shows the number.
                                     if (isHeadless) {
-                                        el.textContent = target.toLocaleString(lang === "fr" ? "fr-CA" : "en-CA");
+                                        el.textContent = target.toLocaleString("fr-CA");
                                         return;
                                     }
                                     const obj = {
@@ -436,7 +245,7 @@ function useAnimations(rootRef, lang) {
                                     };
                                     gsap.to(obj, {
                                         v: target,
-                                        duration: 1.8,
+                                        duration: 2.2,
                                         ease: "power2.out",
                                         scrollTrigger: {
                                             trigger: el,
@@ -445,59 +254,44 @@ function useAnimations(rootRef, lang) {
                                         },
                                         onUpdate: {
                                             "useAnimations.useEffect.ctx": ()=>{
-                                                el.textContent = Math.round(obj.v).toLocaleString(lang === "fr" ? "fr-CA" : "en-CA");
+                                                el.textContent = Math.round(obj.v).toLocaleString("fr-CA");
                                             }
                                         }["useAnimations.useEffect.ctx"]
                                     });
                                 }
                             }["useAnimations.useEffect.ctx"]);
-                            // Contact stagger
-                            if (!reduced) {
-                                gsap.from(".contact-card", fromOpts({
-                                    scrollTrigger: stConfig({
-                                        trigger: ".contact-grid",
-                                        start: "top 85%"
-                                    }),
-                                    opacity: 0,
-                                    y: 20,
-                                    duration: 0.65,
-                                    ease: "power3.out",
-                                    stagger: 0.1
-                                }));
-                            }
                         }
                     }["useAnimations.useEffect.ctx"], root);
-                    if (typeof document !== "undefined" && document.fonts && document.fonts.ready) {
+                    if (document.fonts?.ready) {
                         document.fonts.ready.then({
                             "useAnimations.useEffect": ()=>ScrollTrigger.refresh()
                         }["useAnimations.useEffect"]);
                     }
-                    cleanups.push({
+                    cleanup = ({
                         "useAnimations.useEffect": ()=>{
                             ctx.revert();
                             ScrollTrigger.getAll().forEach({
                                 "useAnimations.useEffect": (s)=>s.kill()
                             }["useAnimations.useEffect"]);
-                            if (lenis) {
-                                lenis.destroy();
-                                lenis = null;
-                            }
+                            if (rafId) cancelAnimationFrame(rafId);
+                            lenis?.destroy();
                         }
-                    }["useAnimations.useEffect"]);
+                    })["useAnimations.useEffect"];
                 }
-            })["useAnimations.useEffect"]();
+            })["useAnimations.useEffect"]().catch({
+                "useAnimations.useEffect": ()=>{
+                    root.classList.add("motion-fallback");
+                }
+            }["useAnimations.useEffect"]);
             return ({
                 "useAnimations.useEffect": ()=>{
-                    cleanups.forEach({
-                        "useAnimations.useEffect": (c)=>c()
-                    }["useAnimations.useEffect"]);
-                    cleanups = [];
+                    mounted = false;
+                    cleanup();
                 }
             })["useAnimations.useEffect"];
         }
     }["useAnimations.useEffect"], [
-        rootRef,
-        lang
+        rootRef
     ]);
 }
 _s(useAnimations, "OD7bBpZva5O2jO+Puf00hKivP7c=");
