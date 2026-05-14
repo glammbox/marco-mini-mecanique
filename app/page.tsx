@@ -452,29 +452,6 @@ export default function Page() {
           <HeadingItalic before={t(COPY.showroom.title)} italic={t(COPY.showroom.italicWord)} className="section-title" />
           <p className="section-lead">{t(COPY.showroom.intro)}</p>
 
-          <div className="showroom-panel">
-            <div className="showroom-panel-head">
-              <h3>{t(COPY.showroom.featured)}</h3>
-              <p>{t(COPY.showroom.sourceNote)}</p>
-            </div>
-            <div className="featured-products">
-              {featuredProducts.map(({ brand, product }) => (
-                <button
-                  type="button"
-                  key={`${brand.slug}-${product.slug}`}
-                  className="featured-product-card"
-                  onClick={() => setSelectedBrand(brand.slug)}
-                  aria-label={`${brand.name} ${product.name}`}
-                >
-                  <span className="featured-brand">{brand.name}</span>
-                  <span className="featured-img"><img src={product.img} alt="" loading="lazy" /></span>
-                  <span className="featured-name">{product.name}</span>
-                  <span className="featured-desc">{lang === "fr" ? product.fr : product.en}</span>
-                </button>
-              ))}
-            </div>
-          </div>
-
           <div className="showroom-panel brand-chooser">
             <div className="showroom-panel-head">
               <h3>{t(COPY.showroom.allBrands)}</h3>

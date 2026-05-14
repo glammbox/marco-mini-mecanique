@@ -473,12 +473,19 @@ button:focus-visible {
   font-size: 0.75rem;
 }
 .showroom-drawer {
-  margin-top: 1.5rem;
-  border: 1px solid rgba(199, 122, 46, 0.45);
-  background: linear-gradient(180deg, #171b1e, #0d1012);
-  padding: 1rem;
-  position: relative;
-  overflow: hidden;
+  position: fixed;
+  top: 10vh;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 100;
+  width: min(1100px, 92vw);
+  max-height: 78vh;
+  overflow: auto;
+  background: var(--graphite-night);
+  border: 1px solid var(--steel-rim);
+  border-radius: 12px;
+  padding: 2rem;
+  box-shadow: 0 25px 60px rgba(0,0,0,0.7);
 }
 @media (min-width: 768px) {
   .showroom-drawer { padding: 1.5rem; }
