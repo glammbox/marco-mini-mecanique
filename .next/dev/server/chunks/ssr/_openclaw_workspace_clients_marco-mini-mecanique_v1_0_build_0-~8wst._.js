@@ -13,19 +13,25 @@ var __TURBOPACK__imported__module__$5b$project$5d2f2e$openclaw$2f$workspace$2f$c
 ;
 ;
 const metadata = {
-    metadataBase: new URL("https://marcominimecanique.com"),
-    title: "Marco Mini Mécanique — Wickham · Réparation & Showroom depuis 1999",
-    description: "Marco Mini Mécanique, Wickham (Centre-du-Québec). Détaillant autorisé Husqvarna, STIHL, Toro, EGO, Lawn Boy, Wallenstein, Split-Fire, Portable Winch, Oregon. Réparation de petits moteurs et sports motorisés depuis 1999.",
+    metadataBase: new URL("https://marco-mini-mecanique.vercel.app"),
+    applicationName: "Marco Mini Mécanique",
+    title: {
+        default: "Marco Mini Mécanique — Wickham · Réparation & Showroom depuis 1999",
+        template: "%s · Marco Mini Mécanique"
+    },
+    description: "Marco Mini Mécanique, Wickham (Centre-du-Québec). Réparation de petits moteurs, pièces, ramassage/livraison et salle de montre depuis 1999.",
     alternates: {
-        canonical: "/",
+        canonical: "https://marco-mini-mecanique.vercel.app/",
         languages: {
-            "fr-CA": "/",
-            "en-CA": "/"
+            "fr-CA": "https://marco-mini-mecanique.vercel.app/",
+            "en-CA": "https://marco-mini-mecanique.vercel.app/"
         }
     },
     openGraph: {
         title: "Marco Mini Mécanique — Wickham depuis 1999",
-        description: "Réparation, pièces et salle de montre. Détaillant autorisé pour 9 marques d'équipement.",
+        description: "Réparation, pièces, ramassage/livraison et salle de montre à Wickham. Détaillant autorisé pour 9 marques d'équipement.",
+        siteName: "Marco Mini Mécanique",
+        url: "https://marco-mini-mecanique.vercel.app/",
         type: "website",
         locale: "fr_CA",
         alternateLocale: [
@@ -36,9 +42,20 @@ const metadata = {
                 url: "/assets/shop-devanture.jpg",
                 width: 1600,
                 height: 1067,
-                alt: "765 route Principale, Wickham"
+                alt: "Marco Mini Mécanique — devanture à Wickham"
             }
         ]
+    },
+    twitter: {
+        card: "summary_large_image",
+        title: "Marco Mini Mécanique — Wickham depuis 1999",
+        description: "Réparation, pièces et salle de montre à Wickham.",
+        images: [
+            "/assets/shop-devanture.jpg"
+        ]
+    },
+    appleWebApp: {
+        title: "Marco Mini Mécanique"
     },
     robots: {
         index: true,
@@ -139,7 +156,7 @@ function RootLayout({ children }) {
                         href: "https://fonts.googleapis.com"
                     }, void 0, false, {
                         fileName: "[project]/.openclaw/workspace/clients/marco-mini-mecanique/v1.0/build/app/layout.tsx",
-                        lineNumber: 66,
+                        lineNumber: 79,
                         columnNumber: 9
                     }, this),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f2e$openclaw$2f$workspace$2f$clients$2f$marco$2d$mini$2d$mecanique$2f$v1$2e$0$2f$build$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$rsc$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["jsxDEV"])("link", {
@@ -148,7 +165,7 @@ function RootLayout({ children }) {
                         crossOrigin: ""
                     }, void 0, false, {
                         fileName: "[project]/.openclaw/workspace/clients/marco-mini-mecanique/v1.0/build/app/layout.tsx",
-                        lineNumber: 67,
+                        lineNumber: 80,
                         columnNumber: 9
                     }, this),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f2e$openclaw$2f$workspace$2f$clients$2f$marco$2d$mini$2d$mecanique$2f$v1$2e$0$2f$build$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$rsc$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["jsxDEV"])("link", {
@@ -156,7 +173,7 @@ function RootLayout({ children }) {
                         href: "https://i.ytimg.com"
                     }, void 0, false, {
                         fileName: "[project]/.openclaw/workspace/clients/marco-mini-mecanique/v1.0/build/app/layout.tsx",
-                        lineNumber: 68,
+                        lineNumber: 81,
                         columnNumber: 9
                     }, this),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f2e$openclaw$2f$workspace$2f$clients$2f$marco$2d$mini$2d$mecanique$2f$v1$2e$0$2f$build$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$rsc$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["jsxDEV"])("script", {
@@ -166,26 +183,26 @@ function RootLayout({ children }) {
                         }
                     }, void 0, false, {
                         fileName: "[project]/.openclaw/workspace/clients/marco-mini-mecanique/v1.0/build/app/layout.tsx",
-                        lineNumber: 69,
+                        lineNumber: 82,
                         columnNumber: 9
                     }, this)
                 ]
             }, void 0, true, {
                 fileName: "[project]/.openclaw/workspace/clients/marco-mini-mecanique/v1.0/build/app/layout.tsx",
-                lineNumber: 65,
+                lineNumber: 78,
                 columnNumber: 7
             }, this),
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f2e$openclaw$2f$workspace$2f$clients$2f$marco$2d$mini$2d$mecanique$2f$v1$2e$0$2f$build$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$rsc$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["jsxDEV"])("body", {
                 children: children
             }, void 0, false, {
                 fileName: "[project]/.openclaw/workspace/clients/marco-mini-mecanique/v1.0/build/app/layout.tsx",
-                lineNumber: 74,
+                lineNumber: 87,
                 columnNumber: 7
             }, this)
         ]
     }, void 0, true, {
         fileName: "[project]/.openclaw/workspace/clients/marco-mini-mecanique/v1.0/build/app/layout.tsx",
-        lineNumber: 64,
+        lineNumber: 77,
         columnNumber: 5
     }, this);
 }

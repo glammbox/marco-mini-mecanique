@@ -3,26 +3,39 @@ import type { Metadata } from "next";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  metadataBase: new URL("https://marcominimecanique.com"),
-  title: "Marco Mini Mécanique — Wickham · Réparation & Showroom depuis 1999",
+  metadataBase: new URL("https://marco-mini-mecanique.vercel.app"),
+  applicationName: "Marco Mini Mécanique",
+  title: {
+    default: "Marco Mini Mécanique — Wickham · Réparation & Showroom depuis 1999",
+    template: "%s · Marco Mini Mécanique",
+  },
   description:
-    "Marco Mini Mécanique, Wickham (Centre-du-Québec). Détaillant autorisé Husqvarna, STIHL, Toro, EGO, Lawn Boy, Wallenstein, Split-Fire, Portable Winch, Oregon. Réparation de petits moteurs et sports motorisés depuis 1999.",
+    "Marco Mini Mécanique, Wickham (Centre-du-Québec). Réparation de petits moteurs, pièces, ramassage/livraison et salle de montre depuis 1999.",
   alternates: {
-    canonical: "/",
+    canonical: "https://marco-mini-mecanique.vercel.app/",
     languages: {
-      "fr-CA": "/",
-      "en-CA": "/",
+      "fr-CA": "https://marco-mini-mecanique.vercel.app/",
+      "en-CA": "https://marco-mini-mecanique.vercel.app/",
     },
   },
   openGraph: {
     title: "Marco Mini Mécanique — Wickham depuis 1999",
     description:
-      "Réparation, pièces et salle de montre. Détaillant autorisé pour 9 marques d'équipement.",
+      "Réparation, pièces, ramassage/livraison et salle de montre à Wickham. Détaillant autorisé pour 9 marques d'équipement.",
+    siteName: "Marco Mini Mécanique",
+    url: "https://marco-mini-mecanique.vercel.app/",
     type: "website",
     locale: "fr_CA",
     alternateLocale: ["en_CA"],
-    images: [{ url: "/assets/shop-devanture.jpg", width: 1600, height: 1067, alt: "765 route Principale, Wickham" }],
+    images: [{ url: "/assets/shop-devanture.jpg", width: 1600, height: 1067, alt: "Marco Mini Mécanique — devanture à Wickham" }],
   },
+  twitter: {
+    card: "summary_large_image",
+    title: "Marco Mini Mécanique — Wickham depuis 1999",
+    description: "Réparation, pièces et salle de montre à Wickham.",
+    images: ["/assets/shop-devanture.jpg"],
+  },
+  appleWebApp: { title: "Marco Mini Mécanique" },
   robots: { index: true, follow: true },
 };
 
