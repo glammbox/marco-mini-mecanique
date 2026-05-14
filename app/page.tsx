@@ -43,8 +43,8 @@ const COPY = {
     title:      { fr: "Atelier",                              en: "Workshop" },
     italicWord: { fr: "Réparation",                           en: "Repair" },
     note: {
-      fr: "Trois techniciens plus Marco standard, jusqu'à quatre mécaniciens en haute saison, plus de 25 ans d'expérience cumulée.",
-      en: "Three technicians plus Marco standard, up to four mechanics at peak season, over 25 years of combined experience.",
+      fr: "L'atelier prend en charge l'entretien, le diagnostic et la réparation d'équipements de travail, de jardin et de sports motorisés : scies à chaîne, tracteurs à gazon, tondeuses, coupe-herbes, débroussailleuses, souffleuses, compacteurs, pilonneuses, fendeuses à bois, génératrices, moteurs stationnaires, VTT, motocross, motos, motoneiges et côte-à-côte/SXS. Trois techniciens plus Marco assurent le service régulier, avec jusqu'à quatre mécaniciens en haute saison.",
+      en: "The workshop handles maintenance, diagnostics, and repairs for work, lawn, garden, and powersports equipment: chainsaws, lawn tractors, mowers, trimmers, brush cutters, snowblowers, compactors, jumping jacks, wood splitters, generators, stationary engines, ATVs, motocross bikes, motorcycles, snowmobiles, and side-by-side/SXS vehicles. Three technicians plus Marco handle regular service, with up to four mechanics during peak season.",
     },
   },
   showroom: {
@@ -149,17 +149,15 @@ const SERVICE_AREA = [
 ];
 
 const ATELIER_SERVICES = [
-  { fr: "VTT — démarrage, transmission, entretien, réparation saisonnière.", en: "ATV — starting, drivetrain, maintenance, seasonal repair.", img: "/assets/equipment-husqvarna-automower.jpg" },
-  { fr: "Moto — inspection, entretien, réparation mécanique.", en: "Motorcycle — inspection, service, mechanical repair.", img: "/assets/equipment-carrousel-promo.jpg" },
-  { fr: "Scie à chaîne — démarrage, système de chaîne, performance de coupe.", en: "Chainsaw — starting, chain system, cutting performance.", img: "/assets/product-husqvarna-550xp-mark2.jpg" },
-  { fr: "Souffleuse — courroies, entretien moteur, préparation hivernale.", en: "Snowblower — belts, engine service, winter readiness.", img: "/assets/product-husqvarna-st224.jpg" },
-  { fr: "Tracteur à gazon — plateau de coupe, entretien moteur, maintenance saisonnière.", en: "Lawn tractor — cutting deck, engine service, seasonal maintenance.", img: "/assets/product-husqvarna-ts248xd.jpg" },
-  { fr: "Scie à béton — réparation moteur, entraînement, préparation chantier.", en: "Concrete saw — engine repair, drive service, jobsite readiness.", img: "/assets/product-stihl-ms462cm.jpg" },
-  { fr: "Pilonneuse / compacteur — entretien et réparation d'équipement de compaction.", en: "Jumping jack / compactor — compaction equipment service and repair.", img: "/assets/equipment-fendeuse-splitter.jpg" },
-  { fr: "Génératrice — démarrage, sortie de courant, entretien.", en: "Generator — starting, output, maintenance.", img: "/assets/equipment-splitfire-splitter.jpg" },
-  { fr: "Moteur stationnaire — diagnostic, réparation, entretien.", en: "Stationary motor — diagnosis, repair, maintenance.", img: "/assets/product-portablewinch-pcw3000.png" },
-  { fr: "Débroussailleuse — réponse d'accélération, entraînement de tête, entretien moteur.", en: "Brush cutter — throttle response, head drive, engine service.", img: "/assets/product-stihl-fs91r.jpg" },
-  { fr: "Taille-haies — système de coupe, entretien moteur, maintenance.", en: "Hedge trimmer — cutting system, engine service, maintenance.", img: "/assets/product-husqvarna-525lk.jpg" },
+  { fr: "Scies à chaîne", en: "Chainsaws" },
+  { fr: "Tracteurs à gazon", en: "Lawn tractors" },
+  { fr: "Tondeuses", en: "Mowers" },
+  { fr: "Coupe-herbes et débroussailleuses", en: "Trimmers and brush cutters" },
+  { fr: "Souffleuses", en: "Snowblowers" },
+  { fr: "Compacteurs et pilonneuses", en: "Compactors and jumping jacks" },
+  { fr: "Fendeuses à bois", en: "Wood splitters" },
+  { fr: "Génératrices et moteurs stationnaires", en: "Generators and stationary motors" },
+  { fr: "VTT, motocross, motos, motoneiges et côte-à-côte/SXS", en: "ATVs, motocross bikes, motorcycles, snowmobiles, and side-by-side/SXS" },
 ];
 
 type Product = { slug: string; img: string; name: string; cat: string; power: string; fr: string; en: string };
@@ -433,17 +431,19 @@ export default function Page() {
         <section id="atelier" className="section atelier">
           <p className="eyebrow">{t(COPY.atelier.eyebrow)}</p>
           <HeadingItalic before={t(COPY.atelier.title)} italic={t(COPY.atelier.italicWord)} className="section-title" />
-          <p className="section-lead">{t(COPY.atelier.note)}</p>
-          <ul className="atelier-grid">
-            {ATELIER_SERVICES.map((s, i) => (
-              <li key={i} className="atelier-card">
-                <div className="atelier-img">
-                  <img src={s.img} alt="" loading="lazy" />
-                </div>
-                <p className="atelier-line">{lang === "fr" ? s.fr : s.en}</p>
-              </li>
-            ))}
-          </ul>
+          <div className="atelier-summary">
+            <div className="atelier-summary-img">
+              <img src="/assets/shop-gallery-100.jpg" alt="Atelier Marco Mini Mécanique" loading="lazy" />
+            </div>
+            <div className="atelier-summary-copy">
+              <p className="section-lead">{t(COPY.atelier.note)}</p>
+              <ul className="atelier-service-list">
+                {ATELIER_SERVICES.map((s) => (
+                  <li key={s.fr}>{lang === "fr" ? s.fr : s.en}</li>
+                ))}
+              </ul>
+            </div>
+          </div>
         </section>
 
         {/* SHOWROOM — dealer-style brand cards, products revealed on click only */}

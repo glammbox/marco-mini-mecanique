@@ -54,12 +54,14 @@ export function useAnimations(rootRef: RefObject<HTMLElement | null>, lang: Lang
       const Lenis = (LenisMod as any).default ?? (LenisMod as any).Lenis;
 
       gsap.registerPlugin(ScrollTrigger);
+      const MOTION_SCALE = 2.6;
+      gsap.globalTimeline.timeScale(1 / MOTION_SCALE);
 
       // Lenis stays off in headless / reduced-motion contexts so the validator
       // snapshot scrolls natively and ScrollTrigger keyframes resolve instantly.
       if (!reduced && !isHeadless) {
         lenis = new Lenis({
-          duration: 1.2,
+          duration: 3.0,
           easing: (t: number) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
           lerp: isCoarse ? 0.1 : undefined,
           smoothWheel: true,
@@ -77,6 +79,8 @@ export function useAnimations(rootRef: RefObject<HTMLElement | null>, lang: Lang
       });
       const fromOpts = (cfg: any) => ({
         ...cfg,
+        duration: typeof cfg.duration === "number" ? cfg.duration * MOTION_SCALE : cfg.duration,
+        stagger: typeof cfg.stagger === "number" ? cfg.stagger * 1.8 : cfg.stagger,
         immediateRender: false,
       });
 
@@ -89,8 +93,8 @@ export function useAnimations(rootRef: RefObject<HTMLElement | null>, lang: Lang
           } else {
             gsap.from(heroWords, {
               opacity: 0, y: 22,
-              duration: 1.15, ease: "power3.out",
-              stagger: 0.14,
+              duration: 2.8, ease: "power3.out",
+              stagger: 0.25,
               delay: 0.25,
             });
           }
@@ -99,8 +103,8 @@ export function useAnimations(rootRef: RefObject<HTMLElement | null>, lang: Lang
         if (!reduced) {
           gsap.from(root.querySelectorAll(".hero .eyebrow, .hero-sub, .hero-cta"), {
             opacity: 0, y: 16,
-            duration: 1.0, ease: "power3.out",
-            stagger: 0.15, delay: 0.7,
+            duration: 2.6, ease: "power3.out",
+            stagger: 0.27, delay: 0.7,
           });
         }
 
@@ -111,21 +115,21 @@ export function useAnimations(rootRef: RefObject<HTMLElement | null>, lang: Lang
           gsap.to(".hero .layer-mid", {
             yPercent: -10,
             ease: "none",
-            scrollTrigger: { trigger: ".hero", start: "top top", end: "bottom top", scrub: 2.2 },
+            scrollTrigger: { trigger: ".hero", start: "top top", end: "bottom top", scrub: 5.5 },
           });
           gsap.to(".liquid-veil-a", {
             xPercent: -9,
             yPercent: 8,
             rotate: -8,
             ease: "none",
-            scrollTrigger: { trigger: ".hero", start: "top top", end: "bottom top", scrub: 2.6 },
+            scrollTrigger: { trigger: ".hero", start: "top top", end: "bottom top", scrub: 6.5 },
           });
           gsap.to(".liquid-veil-b", {
             xPercent: 12,
             yPercent: -7,
             rotate: 11,
             ease: "none",
-            scrollTrigger: { trigger: ".hero", start: "top top", end: "bottom top", scrub: 2.6 },
+            scrollTrigger: { trigger: ".hero", start: "top top", end: "bottom top", scrub: 6.5 },
           });
         }
 
@@ -149,14 +153,14 @@ export function useAnimations(rootRef: RefObject<HTMLElement | null>, lang: Lang
           if (lead) tl.from(lead, fromOpts({ opacity: 0, y: 16, duration: 0.95 }), 0.35);
         });
 
-        // Atelier card reveal
-        const atelierCards = root.querySelectorAll(".atelier-card");
-        if (atelierCards.length && !reduced) {
-          gsap.from(atelierCards, fromOpts({
-            scrollTrigger: stConfig({ trigger: ".atelier-grid", start: "top 85%" }),
-            opacity: 0, y: 28,
-            duration: 1.15, ease: "power3.out",
-            stagger: 0.1,
+        // Atelier summary reveal — slow, readable, no flashing grid
+        const atelierSummary = root.querySelectorAll(".atelier-summary-img, .atelier-summary-copy, .atelier-service-list li");
+        if (atelierSummary.length && !reduced) {
+          gsap.from(atelierSummary, fromOpts({
+            scrollTrigger: stConfig({ trigger: ".atelier-summary", start: "top 85%" }),
+            opacity: 0, y: 24,
+            duration: 1.4, ease: "power3.out",
+            stagger: 0.12,
           }));
         }
 

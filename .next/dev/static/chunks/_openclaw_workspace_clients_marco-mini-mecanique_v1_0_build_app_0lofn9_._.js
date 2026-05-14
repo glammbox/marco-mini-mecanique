@@ -62,11 +62,13 @@ function useAnimations(rootRef, lang) {
                     const ScrollTrigger = ScrollTriggerMod.ScrollTrigger ?? ScrollTriggerMod.default;
                     const Lenis = LenisMod.default ?? LenisMod.Lenis;
                     gsap.registerPlugin(ScrollTrigger);
+                    const MOTION_SCALE = 2.6;
+                    gsap.globalTimeline.timeScale(1 / MOTION_SCALE);
                     // Lenis stays off in headless / reduced-motion contexts so the validator
                     // snapshot scrolls natively and ScrollTrigger keyframes resolve instantly.
                     if (!reduced && !isHeadless) {
                         lenis = new Lenis({
-                            duration: 1.2,
+                            duration: 3.0,
                             easing: {
                                 "useAnimations.useEffect": (t)=>Math.min(1, 1.001 - Math.pow(2, -10 * t))
                             }["useAnimations.useEffect"],
@@ -95,6 +97,8 @@ function useAnimations(rootRef, lang) {
                     const fromOpts = {
                         "useAnimations.useEffect.fromOpts": (cfg)=>({
                                 ...cfg,
+                                duration: typeof cfg.duration === "number" ? cfg.duration * MOTION_SCALE : cfg.duration,
+                                stagger: typeof cfg.stagger === "number" ? cfg.stagger * 1.8 : cfg.stagger,
                                 immediateRender: false
                             })
                     }["useAnimations.useEffect.fromOpts"];
@@ -112,9 +116,9 @@ function useAnimations(rootRef, lang) {
                                     gsap.from(heroWords, {
                                         opacity: 0,
                                         y: 22,
-                                        duration: 1.15,
+                                        duration: 2.8,
                                         ease: "power3.out",
-                                        stagger: 0.14,
+                                        stagger: 0.25,
                                         delay: 0.25
                                     });
                                 }
@@ -123,9 +127,9 @@ function useAnimations(rootRef, lang) {
                                 gsap.from(root.querySelectorAll(".hero .eyebrow, .hero-sub, .hero-cta"), {
                                     opacity: 0,
                                     y: 16,
-                                    duration: 1.0,
+                                    duration: 2.6,
                                     ease: "power3.out",
-                                    stagger: 0.15,
+                                    stagger: 0.27,
                                     delay: 0.7
                                 });
                             }
@@ -140,7 +144,7 @@ function useAnimations(rootRef, lang) {
                                         trigger: ".hero",
                                         start: "top top",
                                         end: "bottom top",
-                                        scrub: 2.2
+                                        scrub: 5.5
                                     }
                                 });
                                 gsap.to(".liquid-veil-a", {
@@ -152,7 +156,7 @@ function useAnimations(rootRef, lang) {
                                         trigger: ".hero",
                                         start: "top top",
                                         end: "bottom top",
-                                        scrub: 2.6
+                                        scrub: 6.5
                                     }
                                 });
                                 gsap.to(".liquid-veil-b", {
@@ -164,7 +168,7 @@ function useAnimations(rootRef, lang) {
                                         trigger: ".hero",
                                         start: "top top",
                                         end: "bottom top",
-                                        scrub: 2.6
+                                        scrub: 6.5
                                     }
                                 });
                             }
@@ -215,19 +219,19 @@ function useAnimations(rootRef, lang) {
                                     }), 0.35);
                                 }
                             }["useAnimations.useEffect.ctx"]);
-                            // Atelier card reveal
-                            const atelierCards = root.querySelectorAll(".atelier-card");
-                            if (atelierCards.length && !reduced) {
-                                gsap.from(atelierCards, fromOpts({
+                            // Atelier summary reveal — slow, readable, no flashing grid
+                            const atelierSummary = root.querySelectorAll(".atelier-summary-img, .atelier-summary-copy, .atelier-service-list li");
+                            if (atelierSummary.length && !reduced) {
+                                gsap.from(atelierSummary, fromOpts({
                                     scrollTrigger: stConfig({
-                                        trigger: ".atelier-grid",
+                                        trigger: ".atelier-summary",
                                         start: "top 85%"
                                     }),
                                     opacity: 0,
-                                    y: 28,
-                                    duration: 1.15,
+                                    y: 24,
+                                    duration: 1.4,
                                     ease: "power3.out",
-                                    stagger: 0.1
+                                    stagger: 0.12
                                 }));
                             }
                             // Showroom — brand block reveals + product card fan-in
@@ -608,8 +612,8 @@ const COPY = {
             en: "Repair"
         },
         note: {
-            fr: "Trois techniciens plus Marco standard, jusqu'à quatre mécaniciens en haute saison, plus de 25 ans d'expérience cumulée.",
-            en: "Three technicians plus Marco standard, up to four mechanics at peak season, over 25 years of combined experience."
+            fr: "L'atelier prend en charge l'entretien, le diagnostic et la réparation d'équipements de travail, de jardin et de sports motorisés : scies à chaîne, tracteurs à gazon, tondeuses, coupe-herbes, débroussailleuses, souffleuses, compacteurs, pilonneuses, fendeuses à bois, génératrices, moteurs stationnaires, VTT, motocross, motos, motoneiges et côte-à-côte/SXS. Trois techniciens plus Marco assurent le service régulier, avec jusqu'à quatre mécaniciens en haute saison.",
+            en: "The workshop handles maintenance, diagnostics, and repairs for work, lawn, garden, and powersports equipment: chainsaws, lawn tractors, mowers, trimmers, brush cutters, snowblowers, compactors, jumping jacks, wood splitters, generators, stationary engines, ATVs, motocross bikes, motorcycles, snowmobiles, and side-by-side/SXS vehicles. Three technicians plus Marco handle regular service, with up to four mechanics during peak season."
         }
     },
     showroom: {
@@ -839,59 +843,40 @@ const SERVICE_AREA = [
 ];
 const ATELIER_SERVICES = [
     {
-        fr: "VTT — démarrage, transmission, entretien, réparation saisonnière.",
-        en: "ATV — starting, drivetrain, maintenance, seasonal repair.",
-        img: "/assets/equipment-husqvarna-automower.jpg"
+        fr: "Scies à chaîne",
+        en: "Chainsaws"
     },
     {
-        fr: "Moto — inspection, entretien, réparation mécanique.",
-        en: "Motorcycle — inspection, service, mechanical repair.",
-        img: "/assets/equipment-carrousel-promo.jpg"
+        fr: "Tracteurs à gazon",
+        en: "Lawn tractors"
     },
     {
-        fr: "Scie à chaîne — démarrage, système de chaîne, performance de coupe.",
-        en: "Chainsaw — starting, chain system, cutting performance.",
-        img: "/assets/product-husqvarna-550xp-mark2.jpg"
+        fr: "Tondeuses",
+        en: "Mowers"
     },
     {
-        fr: "Souffleuse — courroies, entretien moteur, préparation hivernale.",
-        en: "Snowblower — belts, engine service, winter readiness.",
-        img: "/assets/product-husqvarna-st224.jpg"
+        fr: "Coupe-herbes et débroussailleuses",
+        en: "Trimmers and brush cutters"
     },
     {
-        fr: "Tracteur à gazon — plateau de coupe, entretien moteur, maintenance saisonnière.",
-        en: "Lawn tractor — cutting deck, engine service, seasonal maintenance.",
-        img: "/assets/product-husqvarna-ts248xd.jpg"
+        fr: "Souffleuses",
+        en: "Snowblowers"
     },
     {
-        fr: "Scie à béton — réparation moteur, entraînement, préparation chantier.",
-        en: "Concrete saw — engine repair, drive service, jobsite readiness.",
-        img: "/assets/product-stihl-ms462cm.jpg"
+        fr: "Compacteurs et pilonneuses",
+        en: "Compactors and jumping jacks"
     },
     {
-        fr: "Pilonneuse / compacteur — entretien et réparation d'équipement de compaction.",
-        en: "Jumping jack / compactor — compaction equipment service and repair.",
-        img: "/assets/equipment-fendeuse-splitter.jpg"
+        fr: "Fendeuses à bois",
+        en: "Wood splitters"
     },
     {
-        fr: "Génératrice — démarrage, sortie de courant, entretien.",
-        en: "Generator — starting, output, maintenance.",
-        img: "/assets/equipment-splitfire-splitter.jpg"
+        fr: "Génératrices et moteurs stationnaires",
+        en: "Generators and stationary motors"
     },
     {
-        fr: "Moteur stationnaire — diagnostic, réparation, entretien.",
-        en: "Stationary motor — diagnosis, repair, maintenance.",
-        img: "/assets/product-portablewinch-pcw3000.png"
-    },
-    {
-        fr: "Débroussailleuse — réponse d'accélération, entraînement de tête, entretien moteur.",
-        en: "Brush cutter — throttle response, head drive, engine service.",
-        img: "/assets/product-stihl-fs91r.jpg"
-    },
-    {
-        fr: "Taille-haies — système de coupe, entretien moteur, maintenance.",
-        en: "Hedge trimmer — cutting system, engine service, maintenance.",
-        img: "/assets/product-husqvarna-525lk.jpg"
+        fr: "VTT, motocross, motos, motoneiges et côte-à-côte/SXS",
+        en: "ATVs, motocross bikes, motorcycles, snowmobiles, and side-by-side/SXS"
     }
 ];
 const SHOWROOM = [
@@ -1403,7 +1388,7 @@ function HeadingItalic({ before, italic, after, className }) {
                 ]
             }, void 0, true, {
                 fileName: "[project]/.openclaw/workspace/clients/marco-mini-mecanique/v1.0/build/app/page.tsx",
-                lineNumber: 285,
+                lineNumber: 283,
                 columnNumber: 18
             }, this),
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f2e$openclaw$2f$workspace$2f$clients$2f$marco$2d$mini$2d$mecanique$2f$v1$2e$0$2f$build$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
@@ -1411,7 +1396,7 @@ function HeadingItalic({ before, italic, after, className }) {
                 children: italic
             }, void 0, false, {
                 fileName: "[project]/.openclaw/workspace/clients/marco-mini-mecanique/v1.0/build/app/page.tsx",
-                lineNumber: 286,
+                lineNumber: 284,
                 columnNumber: 7
             }, this),
             after && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f2e$openclaw$2f$workspace$2f$clients$2f$marco$2d$mini$2d$mecanique$2f$v1$2e$0$2f$build$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
@@ -1422,13 +1407,13 @@ function HeadingItalic({ before, italic, after, className }) {
                 ]
             }, void 0, true, {
                 fileName: "[project]/.openclaw/workspace/clients/marco-mini-mecanique/v1.0/build/app/page.tsx",
-                lineNumber: 287,
+                lineNumber: 285,
                 columnNumber: 17
             }, this)
         ]
     }, void 0, true, {
         fileName: "[project]/.openclaw/workspace/clients/marco-mini-mecanique/v1.0/build/app/page.tsx",
-        lineNumber: 284,
+        lineNumber: 282,
         columnNumber: 5
     }, this);
 }
@@ -1447,7 +1432,7 @@ function VideoTile({ id, title, brand }) {
                 loading: "lazy"
             }, void 0, false, {
                 fileName: "[project]/.openclaw/workspace/clients/marco-mini-mecanique/v1.0/build/app/page.tsx",
-                lineNumber: 297,
+                lineNumber: 295,
                 columnNumber: 9
             }, this) : /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f2e$openclaw$2f$workspace$2f$clients$2f$marco$2d$mini$2d$mecanique$2f$v1$2e$0$2f$build$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
                 type: "button",
@@ -1463,7 +1448,7 @@ function VideoTile({ id, title, brand }) {
                         height: 360
                     }, void 0, false, {
                         fileName: "[project]/.openclaw/workspace/clients/marco-mini-mecanique/v1.0/build/app/page.tsx",
-                        lineNumber: 306,
+                        lineNumber: 304,
                         columnNumber: 11
                     }, this),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f2e$openclaw$2f$workspace$2f$clients$2f$marco$2d$mini$2d$mecanique$2f$v1$2e$0$2f$build$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
@@ -1472,13 +1457,13 @@ function VideoTile({ id, title, brand }) {
                         children: "▶"
                     }, void 0, false, {
                         fileName: "[project]/.openclaw/workspace/clients/marco-mini-mecanique/v1.0/build/app/page.tsx",
-                        lineNumber: 313,
+                        lineNumber: 311,
                         columnNumber: 11
                     }, this)
                 ]
             }, void 0, true, {
                 fileName: "[project]/.openclaw/workspace/clients/marco-mini-mecanique/v1.0/build/app/page.tsx",
-                lineNumber: 305,
+                lineNumber: 303,
                 columnNumber: 9
             }, this),
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f2e$openclaw$2f$workspace$2f$clients$2f$marco$2d$mini$2d$mecanique$2f$v1$2e$0$2f$build$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1491,7 +1476,7 @@ function VideoTile({ id, title, brand }) {
                                 children: brand
                             }, void 0, false, {
                                 fileName: "[project]/.openclaw/workspace/clients/marco-mini-mecanique/v1.0/build/app/page.tsx",
-                                lineNumber: 318,
+                                lineNumber: 316,
                                 columnNumber: 11
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f2e$openclaw$2f$workspace$2f$clients$2f$marco$2d$mini$2d$mecanique$2f$v1$2e$0$2f$build$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
@@ -1499,13 +1484,13 @@ function VideoTile({ id, title, brand }) {
                                 children: title
                             }, void 0, false, {
                                 fileName: "[project]/.openclaw/workspace/clients/marco-mini-mecanique/v1.0/build/app/page.tsx",
-                                lineNumber: 319,
+                                lineNumber: 317,
                                 columnNumber: 11
                             }, this)
                         ]
                     }, void 0, true, {
                         fileName: "[project]/.openclaw/workspace/clients/marco-mini-mecanique/v1.0/build/app/page.tsx",
-                        lineNumber: 317,
+                        lineNumber: 315,
                         columnNumber: 9
                     }, this),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f2e$openclaw$2f$workspace$2f$clients$2f$marco$2d$mini$2d$mecanique$2f$v1$2e$0$2f$build$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("a", {
@@ -1516,19 +1501,19 @@ function VideoTile({ id, title, brand }) {
                         children: "YouTube"
                     }, void 0, false, {
                         fileName: "[project]/.openclaw/workspace/clients/marco-mini-mecanique/v1.0/build/app/page.tsx",
-                        lineNumber: 321,
+                        lineNumber: 319,
                         columnNumber: 9
                     }, this)
                 ]
             }, void 0, true, {
                 fileName: "[project]/.openclaw/workspace/clients/marco-mini-mecanique/v1.0/build/app/page.tsx",
-                lineNumber: 316,
+                lineNumber: 314,
                 columnNumber: 7
             }, this)
         ]
     }, void 0, true, {
         fileName: "[project]/.openclaw/workspace/clients/marco-mini-mecanique/v1.0/build/app/page.tsx",
-        lineNumber: 295,
+        lineNumber: 293,
         columnNumber: 5
     }, this);
 }
@@ -1626,7 +1611,7 @@ function Page() {
                 children: lang === "fr" ? "Aller au contenu" : "Skip to content"
             }, void 0, false, {
                 fileName: "[project]/.openclaw/workspace/clients/marco-mini-mecanique/v1.0/build/app/page.tsx",
-                lineNumber: 370,
+                lineNumber: 368,
                 columnNumber: 7
             }, this),
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f2e$openclaw$2f$workspace$2f$clients$2f$marco$2d$mini$2d$mecanique$2f$v1$2e$0$2f$build$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("header", {
@@ -1641,7 +1626,7 @@ function Page() {
                                 children: "Marco Mini Mécanique"
                             }, void 0, false, {
                                 fileName: "[project]/.openclaw/workspace/clients/marco-mini-mecanique/v1.0/build/app/page.tsx",
-                                lineNumber: 374,
+                                lineNumber: 372,
                                 columnNumber: 11
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f2e$openclaw$2f$workspace$2f$clients$2f$marco$2d$mini$2d$mecanique$2f$v1$2e$0$2f$build$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
@@ -1652,13 +1637,13 @@ function Page() {
                                 ]
                             }, void 0, true, {
                                 fileName: "[project]/.openclaw/workspace/clients/marco-mini-mecanique/v1.0/build/app/page.tsx",
-                                lineNumber: 375,
+                                lineNumber: 373,
                                 columnNumber: 11
                             }, this)
                         ]
                     }, void 0, true, {
                         fileName: "[project]/.openclaw/workspace/clients/marco-mini-mecanique/v1.0/build/app/page.tsx",
-                        lineNumber: 373,
+                        lineNumber: 371,
                         columnNumber: 9
                     }, this),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f2e$openclaw$2f$workspace$2f$clients$2f$marco$2d$mini$2d$mecanique$2f$v1$2e$0$2f$build$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("nav", {
@@ -1670,22 +1655,22 @@ function Page() {
                                         children: n.label
                                     }, void 0, false, {
                                         fileName: "[project]/.openclaw/workspace/clients/marco-mini-mecanique/v1.0/build/app/page.tsx",
-                                        lineNumber: 380,
+                                        lineNumber: 378,
                                         columnNumber: 32
                                     }, this)
                                 }, n.href, false, {
                                     fileName: "[project]/.openclaw/workspace/clients/marco-mini-mecanique/v1.0/build/app/page.tsx",
-                                    lineNumber: 380,
+                                    lineNumber: 378,
                                     columnNumber: 15
                                 }, this))
                         }, void 0, false, {
                             fileName: "[project]/.openclaw/workspace/clients/marco-mini-mecanique/v1.0/build/app/page.tsx",
-                            lineNumber: 378,
+                            lineNumber: 376,
                             columnNumber: 11
                         }, this)
                     }, void 0, false, {
                         fileName: "[project]/.openclaw/workspace/clients/marco-mini-mecanique/v1.0/build/app/page.tsx",
-                        lineNumber: 377,
+                        lineNumber: 375,
                         columnNumber: 9
                     }, this),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f2e$openclaw$2f$workspace$2f$clients$2f$marco$2d$mini$2d$mecanique$2f$v1$2e$0$2f$build$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1699,14 +1684,14 @@ function Page() {
                                         "aria-hidden": "true"
                                     }, void 0, false, {
                                         fileName: "[project]/.openclaw/workspace/clients/marco-mini-mecanique/v1.0/build/app/page.tsx",
-                                        lineNumber: 386,
+                                        lineNumber: 384,
                                         columnNumber: 13
                                     }, this),
                                     open === false ? t(COPY.status.closed) : t(COPY.status.open)
                                 ]
                             }, void 0, true, {
                                 fileName: "[project]/.openclaw/workspace/clients/marco-mini-mecanique/v1.0/build/app/page.tsx",
-                                lineNumber: 385,
+                                lineNumber: 383,
                                 columnNumber: 11
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f2e$openclaw$2f$workspace$2f$clients$2f$marco$2d$mini$2d$mecanique$2f$v1$2e$0$2f$build$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
@@ -1717,19 +1702,19 @@ function Page() {
                                 children: COPY.footer.langSwap[lang]
                             }, void 0, false, {
                                 fileName: "[project]/.openclaw/workspace/clients/marco-mini-mecanique/v1.0/build/app/page.tsx",
-                                lineNumber: 389,
+                                lineNumber: 387,
                                 columnNumber: 11
                             }, this)
                         ]
                     }, void 0, true, {
                         fileName: "[project]/.openclaw/workspace/clients/marco-mini-mecanique/v1.0/build/app/page.tsx",
-                        lineNumber: 384,
+                        lineNumber: 382,
                         columnNumber: 9
                     }, this)
                 ]
             }, void 0, true, {
                 fileName: "[project]/.openclaw/workspace/clients/marco-mini-mecanique/v1.0/build/app/page.tsx",
-                lineNumber: 372,
+                lineNumber: 370,
                 columnNumber: 7
             }, this),
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f2e$openclaw$2f$workspace$2f$clients$2f$marco$2d$mini$2d$mecanique$2f$v1$2e$0$2f$build$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("main", {
@@ -1753,46 +1738,46 @@ function Page() {
                                             draggable: false
                                         }, void 0, false, {
                                             fileName: "[project]/.openclaw/workspace/clients/marco-mini-mecanique/v1.0/build/app/page.tsx",
-                                            lineNumber: 400,
+                                            lineNumber: 398,
                                             columnNumber: 15
                                         }, this)
                                     }, void 0, false, {
                                         fileName: "[project]/.openclaw/workspace/clients/marco-mini-mecanique/v1.0/build/app/page.tsx",
-                                        lineNumber: 399,
+                                        lineNumber: 397,
                                         columnNumber: 13
                                     }, this),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f2e$openclaw$2f$workspace$2f$clients$2f$marco$2d$mini$2d$mecanique$2f$v1$2e$0$2f$build$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
                                         className: "layer layer-mid"
                                     }, void 0, false, {
                                         fileName: "[project]/.openclaw/workspace/clients/marco-mini-mecanique/v1.0/build/app/page.tsx",
-                                        lineNumber: 408,
+                                        lineNumber: 406,
                                         columnNumber: 13
                                     }, this),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f2e$openclaw$2f$workspace$2f$clients$2f$marco$2d$mini$2d$mecanique$2f$v1$2e$0$2f$build$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
                                         className: "liquid-veil liquid-veil-a"
                                     }, void 0, false, {
                                         fileName: "[project]/.openclaw/workspace/clients/marco-mini-mecanique/v1.0/build/app/page.tsx",
-                                        lineNumber: 409,
+                                        lineNumber: 407,
                                         columnNumber: 13
                                     }, this),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f2e$openclaw$2f$workspace$2f$clients$2f$marco$2d$mini$2d$mecanique$2f$v1$2e$0$2f$build$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
                                         className: "liquid-veil liquid-veil-b"
                                     }, void 0, false, {
                                         fileName: "[project]/.openclaw/workspace/clients/marco-mini-mecanique/v1.0/build/app/page.tsx",
-                                        lineNumber: 410,
+                                        lineNumber: 408,
                                         columnNumber: 13
                                     }, this),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f2e$openclaw$2f$workspace$2f$clients$2f$marco$2d$mini$2d$mecanique$2f$v1$2e$0$2f$build$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
                                         className: "layer layer-fg"
                                     }, void 0, false, {
                                         fileName: "[project]/.openclaw/workspace/clients/marco-mini-mecanique/v1.0/build/app/page.tsx",
-                                        lineNumber: 411,
+                                        lineNumber: 409,
                                         columnNumber: 13
                                     }, this)
                                 ]
                             }, void 0, true, {
                                 fileName: "[project]/.openclaw/workspace/clients/marco-mini-mecanique/v1.0/build/app/page.tsx",
-                                lineNumber: 398,
+                                lineNumber: 396,
                                 columnNumber: 11
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f2e$openclaw$2f$workspace$2f$clients$2f$marco$2d$mini$2d$mecanique$2f$v1$2e$0$2f$build$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1805,7 +1790,7 @@ function Page() {
                                             children: t(COPY.hero.eyebrow)
                                         }, void 0, false, {
                                             fileName: "[project]/.openclaw/workspace/clients/marco-mini-mecanique/v1.0/build/app/page.tsx",
-                                            lineNumber: 415,
+                                            lineNumber: 413,
                                             columnNumber: 15
                                         }, this),
                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f2e$openclaw$2f$workspace$2f$clients$2f$marco$2d$mini$2d$mecanique$2f$v1$2e$0$2f$build$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("h1", {
@@ -1816,7 +1801,7 @@ function Page() {
                                                     children: "Marco "
                                                 }, void 0, false, {
                                                     fileName: "[project]/.openclaw/workspace/clients/marco-mini-mecanique/v1.0/build/app/page.tsx",
-                                                    lineNumber: 417,
+                                                    lineNumber: 415,
                                                     columnNumber: 17
                                                 }, this),
                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f2e$openclaw$2f$workspace$2f$clients$2f$marco$2d$mini$2d$mecanique$2f$v1$2e$0$2f$build$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
@@ -1824,7 +1809,7 @@ function Page() {
                                                     children: "Mini "
                                                 }, void 0, false, {
                                                     fileName: "[project]/.openclaw/workspace/clients/marco-mini-mecanique/v1.0/build/app/page.tsx",
-                                                    lineNumber: 418,
+                                                    lineNumber: 416,
                                                     columnNumber: 17
                                                 }, this),
                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f2e$openclaw$2f$workspace$2f$clients$2f$marco$2d$mini$2d$mecanique$2f$v1$2e$0$2f$build$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
@@ -1832,13 +1817,13 @@ function Page() {
                                                     children: t(COPY.hero.italicWord)
                                                 }, void 0, false, {
                                                     fileName: "[project]/.openclaw/workspace/clients/marco-mini-mecanique/v1.0/build/app/page.tsx",
-                                                    lineNumber: 419,
+                                                    lineNumber: 417,
                                                     columnNumber: 17
                                                 }, this)
                                             ]
                                         }, void 0, true, {
                                             fileName: "[project]/.openclaw/workspace/clients/marco-mini-mecanique/v1.0/build/app/page.tsx",
-                                            lineNumber: 416,
+                                            lineNumber: 414,
                                             columnNumber: 15
                                         }, this),
                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f2e$openclaw$2f$workspace$2f$clients$2f$marco$2d$mini$2d$mecanique$2f$v1$2e$0$2f$build$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
@@ -1846,7 +1831,7 @@ function Page() {
                                             children: t(COPY.hero.sub)
                                         }, void 0, false, {
                                             fileName: "[project]/.openclaw/workspace/clients/marco-mini-mecanique/v1.0/build/app/page.tsx",
-                                            lineNumber: 421,
+                                            lineNumber: 419,
                                             columnNumber: 15
                                         }, this),
                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f2e$openclaw$2f$workspace$2f$clients$2f$marco$2d$mini$2d$mecanique$2f$v1$2e$0$2f$build$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
@@ -1854,7 +1839,7 @@ function Page() {
                                             children: t(COPY.hero.sub2)
                                         }, void 0, false, {
                                             fileName: "[project]/.openclaw/workspace/clients/marco-mini-mecanique/v1.0/build/app/page.tsx",
-                                            lineNumber: 422,
+                                            lineNumber: 420,
                                             columnNumber: 15
                                         }, this),
                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f2e$openclaw$2f$workspace$2f$clients$2f$marco$2d$mini$2d$mecanique$2f$v1$2e$0$2f$build$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1866,7 +1851,7 @@ function Page() {
                                                     children: t(COPY.hero.callCta)
                                                 }, void 0, false, {
                                                     fileName: "[project]/.openclaw/workspace/clients/marco-mini-mecanique/v1.0/build/app/page.tsx",
-                                                    lineNumber: 424,
+                                                    lineNumber: 422,
                                                     columnNumber: 17
                                                 }, this),
                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f2e$openclaw$2f$workspace$2f$clients$2f$marco$2d$mini$2d$mecanique$2f$v1$2e$0$2f$build$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("a", {
@@ -1875,7 +1860,7 @@ function Page() {
                                                     children: t(COPY.hero.serviceCta)
                                                 }, void 0, false, {
                                                     fileName: "[project]/.openclaw/workspace/clients/marco-mini-mecanique/v1.0/build/app/page.tsx",
-                                                    lineNumber: 425,
+                                                    lineNumber: 423,
                                                     columnNumber: 17
                                                 }, this),
                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f2e$openclaw$2f$workspace$2f$clients$2f$marco$2d$mini$2d$mecanique$2f$v1$2e$0$2f$build$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("a", {
@@ -1884,30 +1869,30 @@ function Page() {
                                                     children: t(COPY.hero.pickupCta)
                                                 }, void 0, false, {
                                                     fileName: "[project]/.openclaw/workspace/clients/marco-mini-mecanique/v1.0/build/app/page.tsx",
-                                                    lineNumber: 426,
+                                                    lineNumber: 424,
                                                     columnNumber: 17
                                                 }, this)
                                             ]
                                         }, void 0, true, {
                                             fileName: "[project]/.openclaw/workspace/clients/marco-mini-mecanique/v1.0/build/app/page.tsx",
-                                            lineNumber: 423,
+                                            lineNumber: 421,
                                             columnNumber: 15
                                         }, this)
                                     ]
                                 }, void 0, true, {
                                     fileName: "[project]/.openclaw/workspace/clients/marco-mini-mecanique/v1.0/build/app/page.tsx",
-                                    lineNumber: 414,
+                                    lineNumber: 412,
                                     columnNumber: 13
                                 }, this)
                             }, void 0, false, {
                                 fileName: "[project]/.openclaw/workspace/clients/marco-mini-mecanique/v1.0/build/app/page.tsx",
-                                lineNumber: 413,
+                                lineNumber: 411,
                                 columnNumber: 11
                             }, this)
                         ]
                     }, void 0, true, {
                         fileName: "[project]/.openclaw/workspace/clients/marco-mini-mecanique/v1.0/build/app/page.tsx",
-                        lineNumber: 397,
+                        lineNumber: 395,
                         columnNumber: 9
                     }, this),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f2e$openclaw$2f$workspace$2f$clients$2f$marco$2d$mini$2d$mecanique$2f$v1$2e$0$2f$build$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("section", {
@@ -1919,7 +1904,7 @@ function Page() {
                                 children: t(COPY.atelier.eyebrow)
                             }, void 0, false, {
                                 fileName: "[project]/.openclaw/workspace/clients/marco-mini-mecanique/v1.0/build/app/page.tsx",
-                                lineNumber: 434,
+                                lineNumber: 432,
                                 columnNumber: 11
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f2e$openclaw$2f$workspace$2f$clients$2f$marco$2d$mini$2d$mecanique$2f$v1$2e$0$2f$build$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(HeadingItalic, {
@@ -1928,61 +1913,69 @@ function Page() {
                                 className: "section-title"
                             }, void 0, false, {
                                 fileName: "[project]/.openclaw/workspace/clients/marco-mini-mecanique/v1.0/build/app/page.tsx",
-                                lineNumber: 435,
+                                lineNumber: 433,
                                 columnNumber: 11
                             }, this),
-                            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f2e$openclaw$2f$workspace$2f$clients$2f$marco$2d$mini$2d$mecanique$2f$v1$2e$0$2f$build$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
-                                className: "section-lead",
-                                children: t(COPY.atelier.note)
-                            }, void 0, false, {
-                                fileName: "[project]/.openclaw/workspace/clients/marco-mini-mecanique/v1.0/build/app/page.tsx",
-                                lineNumber: 436,
-                                columnNumber: 11
-                            }, this),
-                            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f2e$openclaw$2f$workspace$2f$clients$2f$marco$2d$mini$2d$mecanique$2f$v1$2e$0$2f$build$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("ul", {
-                                className: "atelier-grid",
-                                children: ATELIER_SERVICES.map((s, i)=>/*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f2e$openclaw$2f$workspace$2f$clients$2f$marco$2d$mini$2d$mecanique$2f$v1$2e$0$2f$build$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("li", {
-                                        className: "atelier-card",
+                            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f2e$openclaw$2f$workspace$2f$clients$2f$marco$2d$mini$2d$mecanique$2f$v1$2e$0$2f$build$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                                className: "atelier-summary",
+                                children: [
+                                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f2e$openclaw$2f$workspace$2f$clients$2f$marco$2d$mini$2d$mecanique$2f$v1$2e$0$2f$build$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                                        className: "atelier-summary-img",
+                                        children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f2e$openclaw$2f$workspace$2f$clients$2f$marco$2d$mini$2d$mecanique$2f$v1$2e$0$2f$build$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("img", {
+                                            src: "/assets/shop-gallery-100.jpg",
+                                            alt: "Atelier Marco Mini Mécanique",
+                                            loading: "lazy"
+                                        }, void 0, false, {
+                                            fileName: "[project]/.openclaw/workspace/clients/marco-mini-mecanique/v1.0/build/app/page.tsx",
+                                            lineNumber: 436,
+                                            columnNumber: 15
+                                        }, this)
+                                    }, void 0, false, {
+                                        fileName: "[project]/.openclaw/workspace/clients/marco-mini-mecanique/v1.0/build/app/page.tsx",
+                                        lineNumber: 435,
+                                        columnNumber: 13
+                                    }, this),
+                                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f2e$openclaw$2f$workspace$2f$clients$2f$marco$2d$mini$2d$mecanique$2f$v1$2e$0$2f$build$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                                        className: "atelier-summary-copy",
                                         children: [
-                                            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f2e$openclaw$2f$workspace$2f$clients$2f$marco$2d$mini$2d$mecanique$2f$v1$2e$0$2f$build$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                                                className: "atelier-img",
-                                                children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f2e$openclaw$2f$workspace$2f$clients$2f$marco$2d$mini$2d$mecanique$2f$v1$2e$0$2f$build$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("img", {
-                                                    src: s.img,
-                                                    alt: "",
-                                                    loading: "lazy"
-                                                }, void 0, false, {
-                                                    fileName: "[project]/.openclaw/workspace/clients/marco-mini-mecanique/v1.0/build/app/page.tsx",
-                                                    lineNumber: 441,
-                                                    columnNumber: 19
-                                                }, this)
+                                            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f2e$openclaw$2f$workspace$2f$clients$2f$marco$2d$mini$2d$mecanique$2f$v1$2e$0$2f$build$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
+                                                className: "section-lead",
+                                                children: t(COPY.atelier.note)
+                                            }, void 0, false, {
+                                                fileName: "[project]/.openclaw/workspace/clients/marco-mini-mecanique/v1.0/build/app/page.tsx",
+                                                lineNumber: 439,
+                                                columnNumber: 15
+                                            }, this),
+                                            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f2e$openclaw$2f$workspace$2f$clients$2f$marco$2d$mini$2d$mecanique$2f$v1$2e$0$2f$build$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("ul", {
+                                                className: "atelier-service-list",
+                                                children: ATELIER_SERVICES.map((s)=>/*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f2e$openclaw$2f$workspace$2f$clients$2f$marco$2d$mini$2d$mecanique$2f$v1$2e$0$2f$build$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("li", {
+                                                        children: lang === "fr" ? s.fr : s.en
+                                                    }, s.fr, false, {
+                                                        fileName: "[project]/.openclaw/workspace/clients/marco-mini-mecanique/v1.0/build/app/page.tsx",
+                                                        lineNumber: 442,
+                                                        columnNumber: 19
+                                                    }, this))
                                             }, void 0, false, {
                                                 fileName: "[project]/.openclaw/workspace/clients/marco-mini-mecanique/v1.0/build/app/page.tsx",
                                                 lineNumber: 440,
-                                                columnNumber: 17
-                                            }, this),
-                                            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f2e$openclaw$2f$workspace$2f$clients$2f$marco$2d$mini$2d$mecanique$2f$v1$2e$0$2f$build$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
-                                                className: "atelier-line",
-                                                children: lang === "fr" ? s.fr : s.en
-                                            }, void 0, false, {
-                                                fileName: "[project]/.openclaw/workspace/clients/marco-mini-mecanique/v1.0/build/app/page.tsx",
-                                                lineNumber: 443,
-                                                columnNumber: 17
+                                                columnNumber: 15
                                             }, this)
                                         ]
-                                    }, i, true, {
+                                    }, void 0, true, {
                                         fileName: "[project]/.openclaw/workspace/clients/marco-mini-mecanique/v1.0/build/app/page.tsx",
-                                        lineNumber: 439,
-                                        columnNumber: 15
-                                    }, this))
-                            }, void 0, false, {
+                                        lineNumber: 438,
+                                        columnNumber: 13
+                                    }, this)
+                                ]
+                            }, void 0, true, {
                                 fileName: "[project]/.openclaw/workspace/clients/marco-mini-mecanique/v1.0/build/app/page.tsx",
-                                lineNumber: 437,
+                                lineNumber: 434,
                                 columnNumber: 11
                             }, this)
                         ]
                     }, void 0, true, {
                         fileName: "[project]/.openclaw/workspace/clients/marco-mini-mecanique/v1.0/build/app/page.tsx",
-                        lineNumber: 433,
+                        lineNumber: 431,
                         columnNumber: 9
                     }, this),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f2e$openclaw$2f$workspace$2f$clients$2f$marco$2d$mini$2d$mecanique$2f$v1$2e$0$2f$build$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("section", {
@@ -2852,7 +2845,7 @@ function Page() {
                 ]
             }, void 0, true, {
                 fileName: "[project]/.openclaw/workspace/clients/marco-mini-mecanique/v1.0/build/app/page.tsx",
-                lineNumber: 395,
+                lineNumber: 393,
                 columnNumber: 7
             }, this),
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f2e$openclaw$2f$workspace$2f$clients$2f$marco$2d$mini$2d$mecanique$2f$v1$2e$0$2f$build$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("footer", {
@@ -2911,7 +2904,7 @@ function Page() {
         ]
     }, void 0, true, {
         fileName: "[project]/.openclaw/workspace/clients/marco-mini-mecanique/v1.0/build/app/page.tsx",
-        lineNumber: 369,
+        lineNumber: 367,
         columnNumber: 5
     }, this);
 }
