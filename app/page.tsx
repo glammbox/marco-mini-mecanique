@@ -68,15 +68,6 @@ const COPY = {
       en: "Data condensed from manufacturer sheets and existing Marco content. No prices published.",
     },
   },
-  brandStrip: {
-    eyebrow: { fr: "Marques autorisées",  en: "Authorized brands" },
-    title:   { fr: "Neuf",                en: "Nine" },
-    italic:  { fr: "Marques",             en: "Brands" },
-    sub: {
-      fr: "Marco Mini Mécanique est détaillant autorisé pour neuf marques.",
-      en: "Marco Mini Mécanique is an authorized dealer for nine brands.",
-    },
-  },
   videos: {
     eyebrow: { fr: "Bibliothèque vidéo",  en: "Video library" },
     title:   { fr: "Vidéos",              en: "Videos" },
@@ -561,20 +552,6 @@ export default function Page() {
               </div>
             </article>
           )}
-        </section>
-
-        {/* BRAND STRIP (marco-mini-mecanique) */}
-        <section className="section brand-strip-section" aria-label={t(COPY.brandStrip.eyebrow)}>
-          <p className="eyebrow">{t(COPY.brandStrip.eyebrow)}</p>
-          <HeadingItalic before={t(COPY.brandStrip.title)} italic={t(COPY.brandStrip.italic)} className="section-title" />
-          <p className="section-lead">{t(COPY.brandStrip.sub)}</p>
-          <ul className="brand-strip">
-            {SHOWROOM.map((b) => (
-              <li key={b.slug} className="brand-logo-cell">
-                <img src={b.logo} alt={`${b.name} logo`} loading="lazy" />
-              </li>
-            ))}
-          </ul>
         </section>
 
         {/* VIDEOS (marco-mini-mecanique) */}
