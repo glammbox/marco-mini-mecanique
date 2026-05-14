@@ -1,0 +1,3 @@
+module.exports=[66236,(a,b,c)=>{let{createClientModuleProxy:d}=a.r(91007);a.n(d("[project]/.openclaw/workspace/clients/marco-mini-mecanique/v1.0/build/node_modules/next/dist/client/components/builtin/global-error.js <module evaluation>"))},50696,(a,b,c)=>{let{createClientModuleProxy:d}=a.r(91007);a.n(d("[project]/.openclaw/workspace/clients/marco-mini-mecanique/v1.0/build/node_modules/next/dist/client/components/builtin/global-error.js"))},70842,a=>{"use strict";a.i(66236);var b=a.i(50696);a.n(b)},99826,a=>{a.n(a.i(70842))}];
+
+//# sourceMappingURL=0fp7_next_dist_client_components_builtin_global-error_0j4kxuq.js.map
