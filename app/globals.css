@@ -1,10 +1,6 @@
-/* marco-mini-mecanique — globals (FIX iter 3)
-   Iter 3 fixes:
-   - Reduce dead space: section padding cut 30%, brand-block margin/padding cut 40%
-   - Mobile showroom: hard-clip overflow on .product-strip parent + intentional snap scroll inside
-   - Product-img treatment: inset vignette to soften manufacturer white-background cutouts
-   - 9-brand strip: 3x3 mobile, 9x1 desktop, larger cells so all logos breathe
-   - Footer/contact tightened to remove trailing empty zone seen in 100% frame */
+/* marco-mini-mecanique — globals (showroom hand pass)
+   Goal: real dealer rhythm, less catalogue dump, video hero, source-backed product cards,
+   GSAP/liquid motion without hiding content from fast users or validators. */
 @import url("https://fonts.googleapis.com/css2?family=Barlow+Condensed:ital,wght@0,300;1,300&family=Inter:wght@300;400&display=swap");
 @import "tailwindcss";
 
@@ -14,6 +10,7 @@
   --steel-rim:      #2A3035;
   --oil-amber:      #C77A2E;
   --ignition-spark: #E8A24C;
+  --coolant-blue:   #557886;
   --ivory-cold:     #E8E4DC;
   --pewter-mute:    #8A8F94;
   --closed-rust:    #8B3A2E;
@@ -160,7 +157,7 @@ button:focus-visible {
 /* HERO */
 .hero {
   position: relative;
-  min-height: 92svh;
+  min-height: 94svh;
   display: flex; align-items: flex-end;
   padding: 0 1.25rem 3.5rem;
   overflow: hidden;
@@ -170,10 +167,45 @@ button:focus-visible {
 
 .hero-layers { position: absolute; inset: 0; z-index: 0; }
 .layer { position: absolute; inset: 0; will-change: transform; }
-.layer-bg .layer-img { object-fit: cover; opacity: 0.55; filter: grayscale(0.25) contrast(1.05) brightness(0.7); }
+.layer-bg {
+  background: #0e1113 url("/assets/hero.jpg") center / cover no-repeat;
+}
+.hero-bg-video,
+.hero-bg-img {
+  width: 100%;
+  height: 100%;
+  display: block;
+  object-fit: cover;
+  opacity: 0.82;
+  transform: translateZ(0);
+  backface-visibility: hidden;
+}
 .layer-mid {
-  background: radial-gradient(ellipse at 30% 70%, rgba(199, 122, 46, 0.18), transparent 55%);
+  background:
+    radial-gradient(ellipse at 28% 74%, rgba(199, 122, 46, 0.18), transparent 55%),
+    linear-gradient(110deg, rgba(85, 120, 134, 0.14), transparent 42%);
   mix-blend-mode: screen;
+}
+.liquid-veil {
+  position: absolute;
+  width: 62vw;
+  height: 38vh;
+  min-width: 460px;
+  min-height: 260px;
+  border: 1px solid rgba(232, 162, 76, 0.16);
+  background:
+    linear-gradient(115deg, transparent 0%, rgba(199, 122, 46, 0.14) 42%, rgba(85, 120, 134, 0.13) 62%, transparent 100%);
+  filter: blur(0.2px);
+  opacity: 0.72;
+  transform: skewX(-14deg) rotate(-4deg);
+  mix-blend-mode: screen;
+  pointer-events: none;
+}
+.liquid-veil-a { right: -18vw; top: 14vh; }
+.liquid-veil-b {
+  left: -24vw; bottom: 6vh;
+  opacity: 0.45;
+  transform: skewX(18deg) rotate(7deg);
 }
 .layer-fg {
   background: linear-gradient(180deg, rgba(14, 17, 19, 0.55) 0%, rgba(14, 17, 19, 0) 35%, rgba(14, 17, 19, 0.95) 100%);
@@ -185,6 +217,7 @@ button:focus-visible {
   margin: 0 auto;
   padding-bottom: 1rem;
 }
+.hero-copy { max-width: 760px; }
 .hero-sub { max-width: 50ch; margin: 1.25rem 0 0.5rem; font-size: 1.05rem; color: var(--ivory-cold); }
 .hero-sub.small { font-size: 0.92rem; color: var(--pewter-mute); margin-top: 0.5rem; }
 .hero-cta { display: flex; flex-wrap: wrap; gap: 0.75rem; margin-top: 2rem; }
@@ -251,7 +284,232 @@ button:focus-visible {
 .atelier-card:hover .atelier-img img { transform: scale(1.04); }
 .atelier-line { margin: 0; font-size: 0.95rem; color: var(--ivory-cold); }
 
-/* SHOWROOM — editorial brand chapters (each brand reads as its own section, not a row in a grid) */
+/* SHOWROOM — dealer cards first, full products only after click */
+.showroom-panel {
+  border: 1px solid var(--steel-rim);
+  background:
+    linear-gradient(180deg, rgba(24, 28, 31, 0.94), rgba(14, 17, 19, 0.96)),
+    linear-gradient(120deg, rgba(85, 120, 134, 0.09), transparent 54%);
+  margin-top: 2rem;
+  padding: 1rem;
+  position: relative;
+  overflow: hidden;
+}
+.showroom-panel::before,
+.showroom-drawer::before {
+  content: "";
+  position: absolute;
+  inset: 0 auto 0 -20%;
+  width: 42%;
+  background: linear-gradient(110deg, transparent, rgba(199, 122, 46, 0.08), transparent);
+  transform: skewX(-18deg);
+  pointer-events: none;
+}
+@media (min-width: 768px) {
+  .showroom-panel { padding: 1.5rem; }
+}
+.showroom-panel-head {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  margin-bottom: 1rem;
+}
+@media (min-width: 900px) {
+  .showroom-panel-head { flex-direction: row; align-items: end; justify-content: space-between; }
+}
+.showroom-panel-head h3 {
+  margin: 0;
+  font-family: var(--font-display);
+  font-weight: 300;
+  font-size: clamp(1.65rem, 3.5vw, 2.7rem);
+}
+.showroom-panel-head p {
+  margin: 0;
+  color: var(--pewter-mute);
+  max-width: 58ch;
+  font-size: 0.9rem;
+}
+.featured-products {
+  position: relative;
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1rem;
+}
+@media (min-width: 760px) {
+  .featured-products { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+@media (min-width: 1180px) {
+  .featured-products { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+}
+.featured-product-card {
+  min-height: 360px;
+  text-align: left;
+  display: grid;
+  grid-template-rows: auto minmax(155px, 1fr) auto auto;
+  gap: 0.75rem;
+  padding: 1rem;
+  border: 1px solid var(--steel-rim);
+  background:
+    linear-gradient(180deg, #181c1f, #101315),
+    radial-gradient(ellipse at 50% 20%, rgba(199, 122, 46, 0.12), transparent 64%);
+  transition: border-color 0.35s var(--ease-premium), transform 0.35s var(--ease-premium);
+}
+.featured-product-card:hover {
+  border-color: var(--oil-amber);
+  transform: translateY(-2px);
+}
+.featured-brand {
+  color: var(--oil-amber);
+  font-size: 0.7rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+.featured-img {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 160px;
+}
+.featured-img img {
+  max-height: 180px;
+  object-fit: contain;
+  filter: drop-shadow(0 12px 22px rgba(0,0,0,0.48));
+}
+.featured-name {
+  font-size: 1.1rem;
+  font-weight: 400;
+}
+.featured-desc {
+  color: var(--pewter-mute);
+  font-size: 0.9rem;
+}
+.brand-choice-grid {
+  position: relative;
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1px;
+  background: var(--steel-rim);
+  border: 1px solid var(--steel-rim);
+}
+@media (min-width: 700px) {
+  .brand-choice-grid { grid-template-columns: repeat(2, 1fr); }
+}
+@media (min-width: 1180px) {
+  .brand-choice-grid { grid-template-columns: repeat(3, 1fr); }
+}
+.brand-choice-card {
+  min-height: 168px;
+  display: grid;
+  grid-template-columns: 88px minmax(0, 1fr) 86px;
+  align-items: center;
+  gap: 1rem;
+  text-align: left;
+  padding: 1rem;
+  background: var(--iron-shadow);
+  border: 0;
+  transition: background 0.35s var(--ease-premium), color 0.35s var(--ease-premium);
+}
+@media (max-width: 520px) {
+  .brand-choice-card { grid-template-columns: 70px minmax(0, 1fr); }
+  .brand-choice-product { display: none !important; }
+}
+.brand-choice-card:hover,
+.brand-choice-card.is-active {
+  background: #20262a;
+}
+.brand-choice-logo,
+.brand-choice-product {
+  height: 82px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.brand-choice-logo img {
+  max-width: 100%;
+  max-height: 62px;
+  object-fit: contain;
+}
+.brand-choice-product img {
+  max-width: 100%;
+  max-height: 86px;
+  object-fit: contain;
+  filter: drop-shadow(0 8px 14px rgba(0,0,0,0.45));
+}
+.brand-choice-copy {
+  display: grid;
+  gap: 0.22rem;
+}
+.brand-choice-copy strong {
+  font-family: var(--font-display);
+  font-weight: 300;
+  font-size: 1.6rem;
+  line-height: 1;
+}
+.brand-choice-copy span {
+  color: var(--ivory-cold);
+  font-size: 0.85rem;
+}
+.brand-choice-copy small {
+  color: var(--pewter-mute);
+  font-size: 0.75rem;
+}
+.showroom-drawer {
+  margin-top: 1.5rem;
+  border: 1px solid rgba(199, 122, 46, 0.45);
+  background: linear-gradient(180deg, #171b1e, #0d1012);
+  padding: 1rem;
+  position: relative;
+  overflow: hidden;
+}
+@media (min-width: 768px) {
+  .showroom-drawer { padding: 1.5rem; }
+}
+.drawer-header {
+  position: relative;
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  gap: 1rem;
+  align-items: center;
+  margin-bottom: 1.25rem;
+}
+@media (min-width: 900px) {
+  .drawer-header { grid-template-columns: auto minmax(0, 1fr) auto; }
+}
+.drawer-header .eyebrow {
+  margin-bottom: 0.35rem;
+}
+.drawer-note {
+  margin: 0.5rem 0 0;
+  color: var(--pewter-mute);
+  font-size: 0.9rem;
+}
+.drawer-close {
+  grid-column: 1 / -1;
+  width: fit-content;
+  padding: 0.75rem 1rem;
+  border: 1px solid var(--steel-rim);
+  font-size: 0.72rem;
+  letter-spacing: 0.11em;
+  text-transform: uppercase;
+}
+@media (min-width: 900px) {
+  .drawer-close { grid-column: auto; }
+}
+.product-grid {
+  position: relative;
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1rem;
+}
+@media (min-width: 680px) {
+  .product-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+@media (min-width: 1100px) {
+  .product-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+}
+
+/* Legacy brand-block styles stay below as fallback for historical stage artifacts. */
 .brand-block {
   margin-top: 4.5rem;
   border-top: 1px solid var(--steel-rim);
@@ -403,6 +661,17 @@ button:focus-visible {
 }
 .product-power { margin: 0; font-size: 0.78rem; color: var(--oil-amber); letter-spacing: 0.04em; }
 .product-desc { margin: 0.5rem 0 0; font-size: 0.92rem; color: var(--pewter-mute); }
+.product-action {
+  width: fit-content;
+  margin-top: 0.75rem;
+  padding-bottom: 0.15rem;
+  color: var(--ivory-cold);
+  border-bottom: 1px solid var(--oil-amber);
+  font-size: 0.75rem;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+}
+.product-action:hover { color: var(--oil-amber); }
 
 /* BRAND STRIP — 3x3 mobile, 9x1 desktop (marco-mini-mecanique) */
 .brand-strip {
@@ -473,7 +742,19 @@ button:focus-visible {
   border-top: 1px solid var(--steel-rim);
 }
 .video-brand { font-size: 0.7rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--oil-amber); }
-.video-title { font-size: 0.85rem; color: var(--ivory-cold); text-align: right; }
+.video-title { display: block; font-size: 0.85rem; color: var(--ivory-cold); text-align: left; }
+.video-link {
+  flex: 0 0 auto;
+  font-size: 0.7rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--pewter-mute);
+  border-bottom: 1px solid var(--steel-rim);
+}
+.video-link:hover {
+  color: var(--oil-amber);
+  border-color: var(--oil-amber);
+}
 
 /* PARTS */
 .parts-strip {

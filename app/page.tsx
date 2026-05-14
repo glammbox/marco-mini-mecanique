@@ -1,10 +1,9 @@
-// marco-mini-mecanique — vision-architect FIX iteration 3
-// Motion library: Editorial Word Reveal · Soft Parallax Depth · Rolex-Pinned Product Story · Glass Ripple Cards
-// Brief contract: cinematic-hero-parallax-real-shop-photo · showroom-brand-subsections-9-real-logos · showroom-horizontal-pin-scrub-desktop · brand-strip-9-official-logos · video-gallery-8-lazy-youtube-embeds · historique-stat-counter-tabular-nums · bilingual-fr-ca-en-ca-toggle · hairline-border-card-language-no-shadow
+// marco-mini-mecanique — showroom rebuild hand pass
+// Motion library: Editorial Word Reveal · Soft Parallax Depth · Liquid Service Veil · Dealer Card Drawer · Video Hero
+// Source basis: Marco source scrape + v1 brief product research + official manufacturer/video references preserved in research/.
 "use client";
 
 import { useEffect, useRef, useState, useMemo } from "react";
-import Image from "next/image";
 import { useAnimations } from "./useAnimations";
 
 type Lang = "fr" | "en";
@@ -24,7 +23,7 @@ const COPY = {
     title:       { fr: "Marco Mini Mécanique",          en: "Marco Mini Mécanique" },
     italicWord:  { fr: "Mécanique",                     en: "Mécanique" },
     sub: {
-      fr: "Réparation, pièces et service en salle de montre à Wickham depuis 1999.",
+      fr: "Réparation, pièces et salle de montre à Wickham depuis 1999.",
       en: "Repair, parts, and showroom service in Wickham since 1999.",
     },
     sub2: {
@@ -53,12 +52,20 @@ const COPY = {
     title:      { fr: "Showroom",                             en: "Showroom" },
     italicWord: { fr: "Équipement",                           en: "Equipment" },
     intro: {
-      fr: "Soutien de détaillant autorisé pour les gammes d'équipement actuelles, avec visuels officiels des marques et vraies photos de produits.",
-      en: "Authorized dealer support for current equipment lines, with official brand visuals and real product photography.",
+      fr: "Une salle de montre plus facile à lire : quelques vedettes d'abord, puis les marques à ouvrir comme chez un détaillant. Descriptions sans prix, à confirmer avec l'atelier selon disponibilité.",
+      en: "An easier showroom: a few featured picks first, then brand cards that open like a dealer display. Descriptions only, no prices, availability to confirm with the shop.",
     },
     hint: {
-      fr: "Glisser pour explorer →",
-      en: "Swipe to explore →",
+      fr: "Cliquer pour voir les fiches",
+      en: "Click for product cards",
+    },
+    featured: { fr: "Sélection en vitrine", en: "Featured showroom picks" },
+    allBrands: { fr: "Choisir une marque", en: "Choose a brand" },
+    close: { fr: "Fermer la marque", en: "Close brand" },
+    availability: { fr: "Vérifier avec l'atelier", en: "Check with the shop" },
+    sourceNote: {
+      fr: "Données condensées à partir des fiches fabricant et du contenu Marco existant. Aucun prix publié.",
+      en: "Data condensed from manufacturer sheets and existing Marco content. No prices published.",
     },
   },
   brandStrip: {
@@ -325,8 +332,18 @@ function VideoTile({ id, title, brand }: { id: string; title: string; brand: str
         </button>
       )}
       <div className="video-meta">
-        <span className="video-brand">{brand}</span>
-        <span className="video-title">{title}</span>
+        <span>
+          <span className="video-brand">{brand}</span>
+          <span className="video-title">{title}</span>
+        </span>
+        <a
+          className="video-link"
+          href={`https://www.youtube.com/watch?v=${id}`}
+          target="_blank"
+          rel="noreferrer"
+        >
+          YouTube
+        </a>
       </div>
     </div>
   );
@@ -335,6 +352,7 @@ function VideoTile({ id, title, brand }: { id: string; title: string; brand: str
 export default function Page() {
   const [lang, setLang] = useState<Lang>("fr");
   const [open, setOpen] = useState<boolean | null>(null);
+  const [selectedBrand, setSelectedBrand] = useState<string | null>(null);
   const rootRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
@@ -347,6 +365,13 @@ export default function Page() {
   useAnimations(rootRef, lang);
 
   const t = (k: { fr: string; en: string }) => k[lang];
+  const activeBrand = useMemo(() => SHOWROOM.find((brand) => brand.slug === selectedBrand) ?? null, [selectedBrand]);
+  const featuredProducts = useMemo(() => [
+    { brand: SHOWROOM[0], product: SHOWROOM[0].products[0] },
+    { brand: SHOWROOM[1], product: SHOWROOM[1].products[1] },
+    { brand: SHOWROOM[2], product: SHOWROOM[2].products[0] },
+    { brand: SHOWROOM[3], product: SHOWROOM[3].products[1] },
+  ], []);
 
   const navItems = useMemo(() => [
     { href: "#atelier",   label: t(COPY.nav.repair) },
@@ -390,24 +415,34 @@ export default function Page() {
         <section className="hero" aria-label={t(COPY.hero.title)}>
           <div className="hero-layers" aria-hidden="true">
             <div className="layer layer-bg">
-              <Image src="/assets/shop-devanture.jpg" alt="" fill priority sizes="100vw" className="layer-img" />
+              <img
+                className="hero-bg-img"
+                src="/assets/hero.jpg"
+                alt=""
+                aria-hidden="true"
+                draggable={false}
+              />
             </div>
             <div className="layer layer-mid" />
+            <div className="liquid-veil liquid-veil-a" />
+            <div className="liquid-veil liquid-veil-b" />
             <div className="layer layer-fg" />
           </div>
           <div className="hero-inner">
-            <p className="eyebrow">{t(COPY.hero.eyebrow)}</p>
-            <h1 className="hero-title">
-              <span className="word inline-block">Marco </span>
-              <span className="word inline-block">Mini </span>
-              <span className="word word-emphasis italic inline-block">{t(COPY.hero.italicWord)}</span>
-            </h1>
-            <p className="hero-sub">{t(COPY.hero.sub)}</p>
-            <p className="hero-sub small">{t(COPY.hero.sub2)}</p>
-            <div className="hero-cta">
-              <a href="tel:8193986673" className="cta cta-primary">{t(COPY.hero.callCta)}</a>
-              <a href="#contact" className="cta cta-ghost">{t(COPY.hero.serviceCta)}</a>
-              <a href="#pickup" className="cta cta-ghost">{t(COPY.hero.pickupCta)}</a>
+            <div className="hero-copy">
+              <p className="eyebrow">{t(COPY.hero.eyebrow)}</p>
+              <h1 className="hero-title">
+                <span className="word inline-block">Marco </span>
+                <span className="word inline-block">Mini </span>
+                <span className="word word-emphasis italic inline-block">{t(COPY.hero.italicWord)}</span>
+              </h1>
+              <p className="hero-sub">{t(COPY.hero.sub)}</p>
+              <p className="hero-sub small">{t(COPY.hero.sub2)}</p>
+              <div className="hero-cta">
+                <a href="tel:8193986673" className="cta cta-primary">{t(COPY.hero.callCta)}</a>
+                <a href="#contact" className="cta cta-ghost">{t(COPY.hero.serviceCta)}</a>
+                <a href="#pickup" className="cta cta-ghost">{t(COPY.hero.pickupCta)}</a>
+              </div>
             </div>
           </div>
         </section>
@@ -429,43 +464,103 @@ export default function Page() {
           </ul>
         </section>
 
-        {/* SHOWROOM — pinned brand sub-sections (marco-mini-mecanique) */}
+        {/* SHOWROOM — dealer-style brand cards, products revealed on click only */}
         <section id="showroom" className="section showroom">
           <p className="eyebrow">{t(COPY.showroom.eyebrow)}</p>
           <HeadingItalic before={t(COPY.showroom.title)} italic={t(COPY.showroom.italicWord)} className="section-title" />
           <p className="section-lead">{t(COPY.showroom.intro)}</p>
 
-          {SHOWROOM.map((brand, idx) => (
-            <article key={brand.slug} className="brand-block" data-pin={idx === 0 ? "true" : undefined}>
-              <header className="brand-header">
+          <div className="showroom-panel">
+            <div className="showroom-panel-head">
+              <h3>{t(COPY.showroom.featured)}</h3>
+              <p>{t(COPY.showroom.sourceNote)}</p>
+            </div>
+            <div className="featured-products">
+              {featuredProducts.map(({ brand, product }) => (
+                <button
+                  type="button"
+                  key={`${brand.slug}-${product.slug}`}
+                  className="featured-product-card"
+                  onClick={() => setSelectedBrand(brand.slug)}
+                  aria-label={`${brand.name} ${product.name}`}
+                >
+                  <span className="featured-brand">{brand.name}</span>
+                  <span className="featured-img"><img src={product.img} alt="" loading="lazy" /></span>
+                  <span className="featured-name">{product.name}</span>
+                  <span className="featured-desc">{lang === "fr" ? product.fr : product.en}</span>
+                </button>
+              ))}
+            </div>
+          </div>
+
+          <div className="showroom-panel brand-chooser">
+            <div className="showroom-panel-head">
+              <h3>{t(COPY.showroom.allBrands)}</h3>
+              <p>{t(COPY.showroom.hint)}</p>
+            </div>
+            <div className="brand-choice-grid">
+              {SHOWROOM.map((brand) => {
+                const lead = brand.products[0];
+                const isActive = selectedBrand === brand.slug;
+                return (
+                  <button
+                    type="button"
+                    key={brand.slug}
+                    className={`brand-choice-card ${isActive ? "is-active" : ""}`}
+                    onClick={() => setSelectedBrand(isActive ? null : brand.slug)}
+                    aria-expanded={isActive}
+                    aria-controls="showroom-product-drawer"
+                  >
+                    <span className="brand-choice-logo">
+                      <img src={brand.logo} alt={`${brand.name} logo`} loading="lazy" />
+                    </span>
+                    <span className="brand-choice-copy">
+                      <strong>{brand.name}</strong>
+                      <span>{brand.products.length} {lang === "fr" ? "fiches produits" : "product cards"}</span>
+                      <small>{lead.cat} · {lead.power}</small>
+                    </span>
+                    <span className="brand-choice-product">
+                      <img src={lead.img} alt="" loading="lazy" />
+                    </span>
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+
+          {activeBrand && (
+            <article id="showroom-product-drawer" className="showroom-drawer" aria-live="polite">
+              <header className="drawer-header">
                 <div className="brand-logo-wrap">
-                  <img src={brand.logo} alt={`${brand.name} logo`} loading="lazy" />
+                  <img src={activeBrand.logo} alt={`${activeBrand.name} logo`} loading="lazy" />
                 </div>
-                <div className="brand-title-wrap">
-                  <h3 className="brand-name">{brand.name}</h3>
-                  <span className="brand-count">{brand.products.length} {lang === "fr" ? "modèles" : "models"}</span>
+                <div>
+                  <p className="eyebrow">{t(COPY.showroom.eyebrow)}</p>
+                  <h3 className="brand-name">{activeBrand.name}</h3>
+                  <p className="drawer-note">{t(COPY.showroom.sourceNote)}</p>
                 </div>
-                <span className="brand-swipe-hint" aria-hidden="true">{t(COPY.showroom.hint)}</span>
+                <button type="button" className="drawer-close" onClick={() => setSelectedBrand(null)}>
+                  {t(COPY.showroom.close)}
+                </button>
               </header>
-              <div className="product-strip">
-                <div className="product-track">
-                  {brand.products.map((p) => (
-                    <article key={p.slug} className="product-card">
-                      <div className="product-img">
-                        <img src={p.img} alt={`${brand.name} ${p.name}`} loading="lazy" />
-                      </div>
-                      <div className="product-meta">
-                        <p className="product-cat">{p.cat}</p>
-                        <h4 className="product-name">{p.name}</h4>
-                        <p className="product-power">{p.power}</p>
-                        <p className="product-desc">{lang === "fr" ? p.fr : p.en}</p>
-                      </div>
-                    </article>
-                  ))}
-                </div>
+              <div className="product-grid">
+                {activeBrand.products.map((p) => (
+                  <article key={p.slug} className="product-card product-card-clickable">
+                    <div className="product-img">
+                      <img src={p.img} alt={`${activeBrand.name} ${p.name}`} loading="lazy" />
+                    </div>
+                    <div className="product-meta">
+                      <p className="product-cat">{p.cat}</p>
+                      <h4 className="product-name">{p.name}</h4>
+                      <p className="product-power">{p.power}</p>
+                      <p className="product-desc">{lang === "fr" ? p.fr : p.en}</p>
+                      <a className="product-action" href="#contact">{t(COPY.showroom.availability)}</a>
+                    </div>
+                  </article>
+                ))}
               </div>
             </article>
-          ))}
+          )}
         </section>
 
         {/* BRAND STRIP (marco-mini-mecanique) */}

@@ -88,33 +88,44 @@ export function useAnimations(rootRef: RefObject<HTMLElement | null>, lang: Lang
             gsap.set(heroWords, { opacity: 1, y: 0 });
           } else {
             gsap.from(heroWords, {
-              opacity: 0, y: 18,
-              duration: 0.65, ease: "power3.out",
-              stagger: 0.08,
-              delay: 0.2,
+              opacity: 0, y: 22,
+              duration: 1.15, ease: "power3.out",
+              stagger: 0.14,
+              delay: 0.25,
             });
           }
         }
 
         if (!reduced) {
           gsap.from(root.querySelectorAll(".hero .eyebrow, .hero-sub, .hero-cta"), {
-            opacity: 0, y: 14,
-            duration: 0.6, ease: "power3.out",
-            stagger: 0.1, delay: 0.5,
+            opacity: 0, y: 16,
+            duration: 1.0, ease: "power3.out",
+            stagger: 0.15, delay: 0.7,
           });
         }
 
-        // Soft Parallax Depth — hero layers
+        // Soft Parallax Depth — bumped scrubs (1→2.2, 1.2→2.6) so the hero
+        // overlays drift slowly, premium Rolex/Hodinkee feel instead of
+        // jumpy follow. Video layer stays fixed (no parallax on .layer-bg).
         if (!reduced && !isHeadless) {
-          gsap.to(".hero .layer-bg", {
-            yPercent: -18,
-            ease: "none",
-            scrollTrigger: { trigger: ".hero", start: "top top", end: "bottom top", scrub: 1 },
-          });
           gsap.to(".hero .layer-mid", {
             yPercent: -10,
             ease: "none",
-            scrollTrigger: { trigger: ".hero", start: "top top", end: "bottom top", scrub: 1 },
+            scrollTrigger: { trigger: ".hero", start: "top top", end: "bottom top", scrub: 2.2 },
+          });
+          gsap.to(".liquid-veil-a", {
+            xPercent: -9,
+            yPercent: 8,
+            rotate: -8,
+            ease: "none",
+            scrollTrigger: { trigger: ".hero", start: "top top", end: "bottom top", scrub: 2.6 },
+          });
+          gsap.to(".liquid-veil-b", {
+            xPercent: 12,
+            yPercent: -7,
+            rotate: 11,
+            ease: "none",
+            scrollTrigger: { trigger: ".hero", start: "top top", end: "bottom top", scrub: 2.6 },
           });
         }
 
@@ -133,9 +144,9 @@ export function useAnimations(rootRef: RefObject<HTMLElement | null>, lang: Lang
             scrollTrigger: stConfig({ trigger: section, start: "top 78%" }),
             defaults: { ease: "power3.out", immediateRender: false },
           });
-          if (eyebrow) tl.from(eyebrow, fromOpts({ opacity: 0, y: 12, duration: 0.5 }), 0);
-          if (words.length) tl.from(words, fromOpts({ opacity: 0, y: 18, duration: 0.55, stagger: 0.06 }), 0.1);
-          if (lead) tl.from(lead, fromOpts({ opacity: 0, y: 14, duration: 0.55 }), 0.25);
+          if (eyebrow) tl.from(eyebrow, fromOpts({ opacity: 0, y: 14, duration: 0.9 }), 0);
+          if (words.length) tl.from(words, fromOpts({ opacity: 0, y: 22, duration: 1.0, stagger: 0.1 }), 0.12);
+          if (lead) tl.from(lead, fromOpts({ opacity: 0, y: 16, duration: 0.95 }), 0.35);
         });
 
         // Atelier card reveal
@@ -143,13 +154,33 @@ export function useAnimations(rootRef: RefObject<HTMLElement | null>, lang: Lang
         if (atelierCards.length && !reduced) {
           gsap.from(atelierCards, fromOpts({
             scrollTrigger: stConfig({ trigger: ".atelier-grid", start: "top 85%" }),
-            opacity: 0, y: 24,
-            duration: 0.7, ease: "power3.out",
-            stagger: 0.06,
+            opacity: 0, y: 28,
+            duration: 1.15, ease: "power3.out",
+            stagger: 0.1,
           }));
         }
 
         // Showroom — brand block reveals + product card fan-in
+        const featuredCards = root.querySelectorAll(".featured-product-card");
+        if (featuredCards.length && !reduced) {
+          gsap.from(featuredCards, fromOpts({
+            scrollTrigger: stConfig({ trigger: ".featured-products", start: "top 85%" }),
+            opacity: 0, y: 22, scale: 0.985,
+            duration: 1.1, ease: "power3.out",
+            stagger: 0.14,
+          }));
+        }
+
+        const brandChoices = root.querySelectorAll(".brand-choice-card");
+        if (brandChoices.length && !reduced) {
+          gsap.from(brandChoices, fromOpts({
+            scrollTrigger: stConfig({ trigger: ".brand-choice-grid", start: "top 84%" }),
+            opacity: 0, y: 18,
+            duration: 0.9, ease: "power3.out",
+            stagger: 0.07,
+          }));
+        }
+
         root.querySelectorAll<HTMLElement>(".brand-block").forEach((block) => {
           const header = block.querySelector(".brand-header");
           const cards = block.querySelectorAll(".product-card");
@@ -158,18 +189,25 @@ export function useAnimations(rootRef: RefObject<HTMLElement | null>, lang: Lang
           if (header) {
             gsap.from(header, fromOpts({
               scrollTrigger: stConfig({ trigger: block, start: "top 85%" }),
-              opacity: 0, y: 20, duration: 0.6, ease: "power3.out",
+              opacity: 0, y: 22, duration: 1.0, ease: "power3.out",
             }));
           }
           if (cards.length) {
             gsap.from(cards, fromOpts({
               scrollTrigger: stConfig({ trigger: block, start: "top 75%" }),
-              opacity: 0, y: 24, scale: 0.98,
-              duration: 0.7, ease: "expo.out",
-              stagger: 0.06,
+              opacity: 0, y: 28, scale: 0.98,
+              duration: 1.15, ease: "expo.out",
+              stagger: 0.1,
             }));
           }
         });
+
+        const drawer = root.querySelector(".showroom-drawer");
+        if (drawer && !reduced) {
+          gsap.from(drawer, fromOpts({
+            opacity: 0, y: 14, duration: 0.45, ease: "power3.out",
+          }));
+        }
 
         // Rolex-Pinned Product Story — desktop only, first brand block
         // Disabled in headless to keep validator snapshots clean.
