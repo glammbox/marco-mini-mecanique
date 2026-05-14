@@ -82,8 +82,8 @@ const COPY = {
     title:   { fr: "Pièces",                en: "Parts" },
     italic:  { fr: "Origine",               en: "OEM" },
     body: {
-      fr: "Des pièces et accessoires d'origine sont disponibles pour VTT, motocross, motoneiges, côte-à-côte/SXS, motos, scies à chaîne, souffleuses et équipements motorisés. Pour vérifier la disponibilité, communiquez avec l'atelier avec la marque, le modèle, l'année et les détails de la pièce.",
-      en: "Parts and original accessories are available for VTT/ATV, motocross, snowmobile, side-by-side/SXS, motorcycles, chainsaws, snowblowers, and motorized equipment. For availability, contact the shop with the make, model, year, and part details.",
+      fr: "Marco Mini Mécanique répare tous les modèles et toutes les marques de petits moteurs, d'équipements motorisés et de sports motorisés : tondeuses, tracteurs à gazon, souffleuses, scies à chaîne, VTT, motos, motocross, motoneiges et côte-à-côte/SXS. L'atelier travaille avec des pièces d'origine lorsque disponibles, pour garder chaque réparation fiable, compatible et durable.",
+      en: "Marco Mini Mécanique repairs all models and all brands of small-engine equipment, powered tools, and powersports machines: mowers, lawn tractors, snowblowers, chainsaws, ATVs, motorcycles, motocross bikes, snowmobiles, and side-by-side/SXS vehicles. The shop uses original OEM parts when available to keep every repair reliable, compatible, and durable.",
     },
   },
   pickup: {
@@ -253,15 +253,6 @@ const SHOWROOM: Brand[] = [
       { slug: "91-239", img: "/assets/product-oregon-mower-blade-91-239.jpg", name: "91-239", cat: "Lame 20-1/2 po", power: "Consommable", fr: "Lame de tondeuse 20-1/2 po, acier trempé, remplacement OEM multi-marques.", en: "20-1/2-in mower blade, hardened steel, multi-brand OEM replacement." },
     ],
   },
-];
-
-const PARTS_VISUALS = [
-  "/assets/catalog-ego-cover.png",
-  "/assets/catalog-portablewinch-cover.png",
-  "/assets/equipment-ego-page-03.png",
-  "/assets/equipment-ego-page-15.png",
-  "/assets/product-oregon-91px-chain.jpg",
-  "/assets/product-oregon-mower-blade-91-239.jpg",
 ];
 
 const VIDEOS = [
@@ -571,13 +562,6 @@ export default function Page() {
           <p className="eyebrow">{t(COPY.parts.eyebrow)}</p>
           <HeadingItalic before={t(COPY.parts.title)} italic={t(COPY.parts.italic)} className="section-title" />
           <p className="section-lead">{t(COPY.parts.body)}</p>
-          <ul className="parts-strip">
-            {PARTS_VISUALS.map((src, i) => (
-              <li key={i} className="parts-card">
-                <img src={src} alt="" loading="lazy" />
-              </li>
-            ))}
-          </ul>
         </section>
 
         {/* PICKUP (marco-mini-mecanique) */}
