@@ -256,8 +256,11 @@ const SHOWROOM: Brand[] = [
 const VIDEOS = [
   { id: "YafJShA9Gkg", title: "Husqvarna 550 XP",          brand: "Husqvarna" },
   { id: "iVfe7p_XMro", title: "Husqvarna mower",            brand: "Husqvarna" },
-  { id: "A863vEUEUC4", title: "STIHL Lithium Ion range",    brand: "STIHL" },
   { id: "elYO6PU6n_g", title: "STIHL Chains explainer",     brand: "STIHL" },
+];
+
+const YOUTUBE_ALL = [
+  { id: "A863vEUEUC4", title: "STIHL Lithium Ion range",    brand: "STIHL" },
   { id: "YLkUlbo41b4", title: "Toro TimeCutter SS / SW",    brand: "Toro" },
   { id: "O6rCWyN4OHM", title: "Toro SnowMaster",            brand: "Toro" },
   { id: "TJEQ1EYyo0w", title: "Lawn Boy AWD mowers",        brand: "Lawn Boy" },
@@ -333,6 +336,7 @@ export default function Page() {
   const [lang, setLang] = useState<Lang>("fr");
   const [open, setOpen] = useState<boolean | null>(null);
   const [selectedBrand, setSelectedBrand] = useState<string | null>(null);
+  const [showYoutube, setShowYoutube] = useState(false);
   const rootRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
@@ -535,6 +539,41 @@ export default function Page() {
               <VideoTile key={v.id} {...v} />
             ))}
           </div>
+
+          <div className="video-more">
+            <button
+              type="button"
+              className="video-youtube-btn"
+              onClick={() => setShowYoutube(true)}
+            >
+              {lang === "fr" ? "Voir toutes les vidéos sur YouTube" : "View all videos on YouTube"}
+            </button>
+          </div>
+
+          {showYoutube && (
+            <div className="youtube-modal">
+              <div className="youtube-modal-backdrop" onClick={() => setShowYoutube(false)} />
+              <div className="youtube-modal-content">
+                <header>
+                  <h3>{lang === "fr" ? "Toutes les vidéos" : "All Videos"}</h3>
+                  <button type="button" onClick={() => setShowYoutube(false)}>×</button>
+                </header>
+                <div className="youtube-list">
+                  {YOUTUBE_ALL.map((v) => (
+                    <a
+                      key={v.id}
+                      href={`https://www.youtube.com/watch?v=${v.id}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="youtube-item"
+                    >
+                      {v.title} — {v.brand}
+                    </a>
+                  ))}
+                </div>
+              </div>
+            </div>
+          )}
         </section>
 
         {/* PARTS (marco-mini-mecanique) */}

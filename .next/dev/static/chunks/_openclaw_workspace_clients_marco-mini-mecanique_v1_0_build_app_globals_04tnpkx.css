@@ -976,7 +976,7 @@ a:focus-visible, button:focus-visible {
 }
 
 .showroom-drawer {
-  z-index: 100;
+  z-index: 110;
   background: var(--graphite-night);
   border: 1px solid var(--steel-rim);
   border-radius: 12px;
@@ -989,6 +989,13 @@ a:focus-visible, button:focus-visible {
   overflow: auto;
   transform: translateX(-50%);
   box-shadow: 0 25px 60px #000000b3;
+}
+
+.drawer-backdrop {
+  z-index: 105;
+  background: #0009;
+  position: fixed;
+  inset: 0;
 }
 
 @media (min-width: 768px) {
